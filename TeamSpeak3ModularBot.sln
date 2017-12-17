@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpeak3ModularBot", "TeamSpeak3ModularBot\TeamSpeak3ModularBot.csproj", "{C78033C0-EBB7-4599-B033-1D944F4D97CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TS3ModularBotPluginTest", "TS3ModularBotPluginTest\TS3ModularBotPluginTest.csproj", "{EC3A6423-C3AC-4FAB-B377-7D5A0BA09E9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpeak3ModularBotPlugin", "TeamSpeak3ModularBotPlugin\TeamSpeak3ModularBotPlugin.csproj", "{C43B088E-7A12-454F-8AC8-3A1F3830D339}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C78033C0-EBB7-4599-B033-1D944F4D97CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C78033C0-EBB7-4599-B033-1D944F4D97CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C78033C0-EBB7-4599-B033-1D944F4D97CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C78033C0-EBB7-4599-B033-1D944F4D97CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC3A6423-C3AC-4FAB-B377-7D5A0BA09E9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC3A6423-C3AC-4FAB-B377-7D5A0BA09E9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC3A6423-C3AC-4FAB-B377-7D5A0BA09E9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC3A6423-C3AC-4FAB-B377-7D5A0BA09E9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C43B088E-7A12-454F-8AC8-3A1F3830D339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C43B088E-7A12-454F-8AC8-3A1F3830D339}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C43B088E-7A12-454F-8AC8-3A1F3830D339}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C43B088E-7A12-454F-8AC8-3A1F3830D339}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
