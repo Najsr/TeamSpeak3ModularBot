@@ -56,7 +56,8 @@ namespace TS3ModularBotPluginTest
         private void NotificationsOnClientJoined(object sender, ClientJoinedEventArgs clientJoinedEventArgs)
         {
             if (clientJoinedEventArgs.ClientType != 0) return;
-            Console.Write("{0} joined; ", Ts3Instance.GetClientInfo(clientJoinedEventArgs.ClientId).Nickname);
+	        //Console.WriteLine(Ts3Instance.GetClientInfo(clientJoinedEventArgs.ClientId).TotalConnections);
+			Console.Write("{0} joined; ", Ts3Instance.GetClientInfo(clientJoinedEventArgs.ClientId).Nickname);
             if (_clids.Count(x => x.Clid == clientJoinedEventArgs.ClientId) != 0)
             {
                 Console.Write("client already in list" + Environment.NewLine);

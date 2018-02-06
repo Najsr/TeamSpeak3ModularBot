@@ -20,6 +20,7 @@ namespace TeamSpeak3ModularBot
         {
             _originalOut.WriteLine($"[{DateTime.Now:T}]: {message}");
         }
+
         public override void Write(string message)
         {
             _originalOut.Write($"[{DateTime.Now:T}]: {message}");

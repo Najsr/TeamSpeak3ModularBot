@@ -25,7 +25,7 @@ namespace TeamSpeak3ModularBotPlugin.Helper
             return message == null ? null : new Message(message);
         }
 
-        private string[] GetSsvParameters(string toSplit)
+        private static string[] GetSsvParameters(string toSplit)
         {
             if (toSplit == string.Empty)
             {
@@ -36,7 +36,7 @@ namespace TeamSpeak3ModularBotPlugin.Helper
             return myRegex.Split(toSplit).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Replace("\"", "")).ToArray();
         }
 
-        private void GetCommand(string toGet, out string command, out string[] params_)
+        private static void GetCommand(string toGet, out string command, out string[] params_)
         {
             var myRegex = new Regex(@"^!([^\s]*)\s?(.*)");
             var match = myRegex.Match(toGet);

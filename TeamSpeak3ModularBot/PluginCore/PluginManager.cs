@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using TeamSpeak3ModularBot.Plugins;
 using TeamSpeak3ModularBotPlugin;
 using TeamSpeak3ModularBotPlugin.Helper;
 using TS3QueryLib.Core.Server;
@@ -10,7 +11,7 @@ using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TeamSpeak3ModularBot.PluginCore
 {
-    internal class PluginManager
+    public class PluginManager
     {
         public readonly List<IPlugin> Plugins = new List<IPlugin>();
 
@@ -23,9 +24,16 @@ namespace TeamSpeak3ModularBot.PluginCore
             _queryRunner = qr;
         }
 
+	    public void UnloadPlugins()
+	    {
+			Plugins.ForEach(x => x.Dispose());
+	    }
+
         public void LoadPlugins()
         {
-            try
+	        LoadInternalPlugins();
+			Console.WriteLine("Interal plugins loaded successfully");
+			try
             {
                 var plugins = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "plugins", "*.dll");
                 foreach (var plugin in plugins)
@@ -49,22 +57,47 @@ namespace TeamSpeak3ModularBot.PluginCore
 
                 var instance = (IPlugin)Activator.CreateInstance(type);
                 instance.Ts3Instance = _queryRunner;
-                instance.OnLoad();
+				instance.OnLoad();
 
-                var methods = type.GetMethods()
-                    .Where(m => m.GetCustomAttributes(typeof(ClientCommand), false).Length > 0 && m.Name != "OnLoad").ToArray();
-                if (methods.Length > 0)
-                {
-                    foreach (var methodInfo in methods)
-                    {
-                        var attribute = (ClientCommand)methodInfo.GetCustomAttributes(typeof(ClientCommand), false)[0];
-                        CommandList.Add(new CommandStruct(instance, methodInfo, attribute));
-                    }
-                }
-                Console.WriteLine("Plugin {0} ({1}) by {2} has been successfully loaded!", instance.GetType().Name, instance.Version, instance.Author);
+				LoadClientCommandMethods(type, instance);
+	            Console.WriteLine("Plugin {0} ({1}) by {2} has been successfully loaded!", instance.GetType().Name, instance.Version, instance.Author);
                 Plugins.Add(instance);
             }
         }
+
+	    private void LoadInternalPlugins()
+	    {
+		    var classes = Assembly.GetExecutingAssembly().GetTypes().Where(t => string.Equals(t.Namespace, "TeamSpeak3ModularBot.Plugins", StringComparison.Ordinal)).ToList();
+		    foreach (var type in classes)
+		    {
+			    if (!typeof(IPlugin).IsAssignableFrom(type) || Plugins.Any(x => x.GetType().Name == type.Name))
+				    continue;
+
+			    var instance = (IPlugin)Activator.CreateInstance(type);
+			    instance.Ts3Instance = _queryRunner;
+			    instance.OnLoad();
+			    if (typeof(PrivatePlugin).IsAssignableFrom(type))
+			    {
+				    var methodInfo = type.GetMethod("OnPluginManager");
+				    if (methodInfo != null)
+					    methodInfo.Invoke(instance, new object[] {this});
+			    }
+				LoadClientCommandMethods(type, instance);
+			}
+		}
+
+	    private void LoadClientCommandMethods(Type type, IPlugin instance)
+	    {
+		    var methods = type.GetMethods()
+			    .Where(m => m.GetCustomAttributes(typeof(ClientCommand), false).Length > 0 && m.Name != "OnLoad").ToArray();
+			if (methods.Length <= 0)
+			    return;
+		    foreach (var methodInfo in methods)
+		    {
+			    var attribute = (ClientCommand)methodInfo.GetCustomAttributes(typeof(ClientCommand), false)[0];
+			    CommandList.Add(new CommandStruct(instance, methodInfo, attribute));
+		    }
+	    }
 
         public struct CommandStruct
         {

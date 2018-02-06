@@ -2,7 +2,6 @@
 using TeamSpeak3ModularBotPlugin;
 using TS3QueryLib.Core.Server;
 using System.Timers;
-using TS3QueryLib.Core.CommandHandling;
 
 namespace TS3ModularBotPluginTest
 {
@@ -24,7 +23,7 @@ namespace TS3ModularBotPluginTest
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            Ts3Instance.SendTextMessage(MessageTarget.Server, 0, DateTime.Now.ToLongTimeString());
+            //Ts3Instance.SendTextMessage(MessageTarget.Server, 0, DateTime.Now.ToLongTimeString());
         }
 
         public string Author => "Nicer";

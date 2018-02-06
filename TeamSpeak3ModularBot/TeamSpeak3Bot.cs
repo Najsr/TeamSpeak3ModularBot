@@ -20,9 +20,7 @@ namespace TeamSpeak3ModularBot
 
         private AsyncTcpDispatcher QueryDispatcher { get; set; }
 
-        private CommandManager CommandManager { get; set; }
-
-        internal PluginManager PluginManager;
+	    internal PluginManager PluginManager;
 
         internal QueryRunner QueryRunner { get; set; }
 
@@ -80,8 +78,9 @@ namespace TeamSpeak3ModularBot
             Console.WriteLine("Successfully connected! It took [{0}:{1}:{2}.{3}]", _stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds, _stopwatch.Elapsed.Milliseconds);
             Console.WriteLine("Loading plugins...");
             PluginManager.LoadPlugins();
-            CommandManager = new CommandManager(QueryRunner, PluginManager);
-            Console.WriteLine("All plugins have been loaded.");
+	        // ReSharper disable once ObjectCreationAsStatement
+	        var commandManager = new CommandManager(QueryRunner, PluginManager);
+	        Console.WriteLine("All plugins have been loaded.");
         }
 
         private void NotificationsOnClientMessageReceived(object sender, MessageReceivedEventArgs messageReceivedEventArgs)

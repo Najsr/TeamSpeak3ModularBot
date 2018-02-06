@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Timers;
 using Newtonsoft.Json;
 using TeamSpeak3ModularBot.Config;
 
@@ -16,6 +18,8 @@ namespace TeamSpeak3ModularBot
 
         private delegate bool ConsoleEventDelegate(int eventType);
 
+	    private static Timer _timer;
+
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
 
@@ -23,6 +27,9 @@ namespace TeamSpeak3ModularBot
         {
             _handler = ConsoleEventCallback;
             SetConsoleCtrlHandler(_handler, true);
+			_timer = new Timer(1000);
+			_timer.Elapsed += _timer_Elapsed;
+	        _timer.Enabled = true;
             Console.SetOut(new PrefixedWriter());
             Console.Title = "TS3ModularBot";
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -48,7 +55,13 @@ namespace TeamSpeak3ModularBot
             Console.ReadLine();
         }
 
-        private static bool ConsoleEventCallback(int eventType)
+		private static void _timer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			GC.Collect();
+			Console.Title = "TS3ModularBot (" + Process.GetCurrentProcess().WorkingSet64 / 1048576 + " MB)";
+		}
+
+		private static bool ConsoleEventCallback(int eventType)
         {
             if (eventType == 2)
                 _teamSpeak3Bot.Dispose();
@@ -57,7 +70,7 @@ namespace TeamSpeak3ModularBot
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Console.WriteLine("Unhandled exception: {0}", e.ExceptionObject.ToString());
+            Console.WriteLine("Unhandled exception: {0}", e.ExceptionObject);
             Console.ReadLine();
             Environment.Exit(0);
         }
