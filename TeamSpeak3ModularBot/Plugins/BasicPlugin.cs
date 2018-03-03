@@ -8,35 +8,47 @@ using TeamSpeak3ModularBot.PluginCore;
 
 namespace TeamSpeak3ModularBot.Plugins
 {
-    internal class BasicPlugin : PrivatePlugin
+    public class BasicPlugin : IPrivatePlugin
     {
 	    private PluginManager _pluginManager;
 
-        public new void OnLoad()
+        public void OnLoad()
         {
         }
 
-	    public override void OnPluginManager(PluginManager pluginManager)
+	    public void OnPluginManager(PluginManager pluginManager)
 	    {
 		    _pluginManager = pluginManager;
 	    }
 
-        public new void Dispose()
+        public void Dispose()
         {
             
         }
 
-        public new string Author => "Nicer";
+        public string Author => "Nicer";
 
-        public new Version Version => new Version(1, 0, 0, 0);
-
-        public new QueryRunner Ts3Instance { get; set; }
+        public Version Version => new Version(1, 0, 0, 0);
+        public QueryRunner Ts3Instance { get; set; }
 
         [ClientCommand("info", ClientCommand.MessageMode.Private | ClientCommand.MessageMode.Channel)]
         public void Info(MessageReceivedEventArgs eventArgs, Message e)
         {
-	        var toSend = "I have currently " + _pluginManager.Plugins.Count + " plugins loaded. (" + string.Join(", ", _pluginManager.Plugins.Select(x => x.GetType().Name) + ")");
+            var toSend = "I have currently " + _pluginManager.Plugins.Count + " plugins loaded. (" + string.Join(", ", _pluginManager.Plugins.Select(x => x.GetType().Name).ToArray()) + ")";
 			Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, toSend);
+        }
+
+        [ClientCommand("unload", ClientCommand.MessageMode.Private)]
+        public void Unload(MessageReceivedEventArgs eventArgs, Message e)
+        {
+            if (e.Params == null)
+            {
+                _pluginManager.UnloadPlugins();
+                return;
+            }
+
+            if(_pluginManager.UnloadPlugin(e.Params[0]))
+                Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, "Plugin " + e.Params[0] + " successfully unloaded");
         }
     }
 }

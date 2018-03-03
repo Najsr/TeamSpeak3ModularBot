@@ -55,8 +55,8 @@
     <Compile Include="Config\TS3Config.cs" />
     <Compile Include="PluginCore\CommandManager.cs" />
     <Compile Include="PluginCore\PluginManager.cs" />
-    <Compile Include="Plugins\PrivatePlugin.cs" />
-    <Compile Include="Plugins\General.cs" />
+    <Compile Include="PluginCore\IPrivatePlugin.cs" />
+    <Compile Include="Plugins\BasicPlugin.cs" />
     <Compile Include="PrefixedWriter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
