@@ -10,32 +10,39 @@ namespace TeamSpeak3ModularBot.Plugins
 {
     public class BasicPlugin : IPrivatePlugin
     {
-	    private PluginManager _pluginManager;
+        private PluginManager _pluginManager;
 
         public void OnLoad()
         {
         }
 
-	    public void OnPluginManager(PluginManager pluginManager)
-	    {
-		    _pluginManager = pluginManager;
-	    }
+        public void OnPluginManager(PluginManager pluginManager)
+        {
+            _pluginManager = pluginManager;
+        }
 
         public void Dispose()
         {
-            
+
         }
 
         public string Author => "Nicer";
 
         public Version Version => new Version(1, 0, 0, 0);
+
         public QueryRunner Ts3Instance { get; set; }
 
         [ClientCommand("info", ClientCommand.MessageMode.Private | ClientCommand.MessageMode.Channel)]
         public void Info(MessageReceivedEventArgs eventArgs, Message e)
         {
-            var toSend = "I have currently " + _pluginManager.Plugins.Count + " plugins loaded. (" + string.Join(", ", _pluginManager.Plugins.Select(x => x.GetType().Name).ToArray()) + ")";
-			Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, toSend);
+            var pluginNames = _pluginManager.Plugins.Select(x => x.GetType().Name).ToArray();
+            string toSend;
+            if (pluginNames.Length > 0)
+                toSend = "I have currently " + _pluginManager.Plugins.Count + " plugin(s) loaded. (" +
+                         string.Join(", ", pluginNames) + ")";
+            else
+                toSend = "I have 0 plugins loaded";
+            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, toSend);
         }
 
         [ClientCommand("unload", ClientCommand.MessageMode.Private)]
@@ -47,8 +54,8 @@ namespace TeamSpeak3ModularBot.Plugins
                 return;
             }
 
-            if(_pluginManager.UnloadPlugin(e.Params[0]))
-                Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, "Plugin " + e.Params[0] + " successfully unloaded");
+            if (_pluginManager.UnloadPlugin(e.Params[0]))
+                Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, e.Params[0] + " successfully unloaded");
         }
     }
 }
