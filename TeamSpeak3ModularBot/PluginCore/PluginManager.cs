@@ -103,8 +103,6 @@ namespace TeamSpeak3ModularBot.PluginCore
         {
             var methods = type.GetMethods()
                 .Where(m => m.GetCustomAttributes(typeof(ClientCommand), false).Length > 0 && m.Name != "OnLoad").ToArray();
-            if (methods.Length <= 0)
-                return;
             foreach (var methodInfo in methods)
             {
                 var attribute = (ClientCommand)methodInfo.GetCustomAttributes(typeof(ClientCommand), false)[0];

@@ -29,7 +29,7 @@ namespace TeamSpeak3ModularBotPlugin.Helper
         {
             if (toSplit == string.Empty)
             {
-                return null;
+                return new string[0];
             }
             var myRegex = new Regex(@"[ ](?=(?:[^""]*""[^""]*"")*[^""]*$)");
 
@@ -40,8 +40,8 @@ namespace TeamSpeak3ModularBotPlugin.Helper
         {
             var myRegex = new Regex(@"^!([^\s]*)\s?(.*)");
             var match = myRegex.Match(toGet);
-            command =  match.Success ? match.Groups[1].Value : null;
-            params_ = match.Success ? GetSsvParameters(match.Groups[2].Value) : null;
+            command =  match.Success ? match.Groups[1].Value : string.Empty;
+            params_ = match.Success ? GetSsvParameters(match.Groups[2].Value) : new string[0];
         }
     }
 }

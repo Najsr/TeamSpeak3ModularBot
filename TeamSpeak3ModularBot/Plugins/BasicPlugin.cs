@@ -41,7 +41,7 @@ namespace TeamSpeak3ModularBot.Plugins
         [ClientCommand("unload", ClientCommand.MessageMode.Private)]
         public void Unload(MessageReceivedEventArgs eventArgs, Message e)
         {
-            if (e.Params == null)
+            if (e.Params.Length == 0)
             {
                 _pluginManager.UnloadPlugins();
                 return;
