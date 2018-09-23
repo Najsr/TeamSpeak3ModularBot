@@ -62,7 +62,7 @@ namespace TeamSpeak3ModularBot.PluginCore
             }
         }
 
-        private void LoadDll(string file)
+        public void LoadDll(string file)
         {
             var asm = Assembly.LoadFile(file);
             foreach (var type in asm.GetTypes())
@@ -111,6 +111,20 @@ namespace TeamSpeak3ModularBot.PluginCore
             plugin.Dispose();
             _plugins.RemoveAt(pluginIndex);
             return true;
+        }
+
+        public void ReloadPlugin(string name)
+        {
+            var pluginIndex = _plugins.FindIndex(x => x.GetType().Name == name);
+            if (pluginIndex == -1)
+                return;
+            var plugin = _plugins[pluginIndex];
+            var newPlugin = (IPlugin) Activator.CreateInstance(plugin.GetType());
+            plugin.Dispose();
+            newPlugin.Ts3Instance = _queryRunner;
+            newPlugin.OnLoad();
+            _plugins[pluginIndex] = newPlugin;
+
         }
 
         public struct CommandStruct

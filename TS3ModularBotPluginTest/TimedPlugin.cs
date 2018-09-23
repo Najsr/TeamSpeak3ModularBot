@@ -11,7 +11,7 @@ namespace TS3ModularBotPluginTest
     internal class TimedPlugin : IPlugin
     {
         private readonly Timer _timer = new Timer(1000);
-
+        private int _i;
         public void OnLoad()
         {
             _timer.Elapsed += TimerOnElapsed;
@@ -35,7 +35,8 @@ namespace TS3ModularBotPluginTest
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            Console.WriteLine("Test");
+            Console.WriteLine($"Test {_i}");
+            _i++;
             //Ts3Instance.SendTextMessage(MessageTarget.Client, 12, DateTime.Now.ToLongTimeString());
         }
 
