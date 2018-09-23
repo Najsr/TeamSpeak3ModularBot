@@ -14,14 +14,13 @@ namespace TeamSpeak3ModularBot
             _originalOut = Console.Out;
         }
 
-        public override Encoding Encoding => new ASCIIEncoding();
+        public override Encoding Encoding => new UTF8Encoding();
 
         public override void WriteLine(string message)
         {
             _originalOut.WriteLine($"[{DateTime.Now:T}]: {message}");
         }
-
-        public override void Write(string message)
+        public void WriteWithTime(string message)
         {
             _originalOut.Write($"[{DateTime.Now:T}]: {message}");
         }

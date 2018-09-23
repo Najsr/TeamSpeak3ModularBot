@@ -6,9 +6,9 @@ namespace TeamSpeak3ModularBotPlugin.Helper
 
     public class ClientCommand : Attribute
     {
-        public string Message { get; set; }
+        public string Message { get; }
 
-        public MessageMode MessageType { get; set; }
+        public MessageMode MessageType { get; }
 
         public ClientCommand(string msg, MessageMode msgType)
         {

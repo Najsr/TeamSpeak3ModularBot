@@ -2,6 +2,9 @@
 using TeamSpeak3ModularBotPlugin;
 using TS3QueryLib.Core.Server;
 using System.Timers;
+using TeamSpeak3ModularBotPlugin.Helper;
+using TS3QueryLib.Core.CommandHandling;
+using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TS3ModularBotPluginTest
 {
@@ -19,11 +22,21 @@ namespace TS3ModularBotPluginTest
         {
             _timer.Elapsed -= TimerOnElapsed;
             _timer.Enabled = false;
+            _timer.Dispose();
         }
+
+        [ClientCommand("hi", ClientCommand.MessageMode.Private | ClientCommand.MessageMode.Channel)]
+        public void SendMessage(MessageReceivedEventArgs eventArgs, Message e)
+        {
+            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
+                $"hello there {eventArgs.InvokerNickname}");
+        }
+
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            //Ts3Instance.SendTextMessage(MessageTarget.Server, 0, DateTime.Now.ToLongTimeString());
+            Console.WriteLine("Test");
+            //Ts3Instance.SendTextMessage(MessageTarget.Client, 12, DateTime.Now.ToLongTimeString());
         }
 
         public string Author => "Nicer";

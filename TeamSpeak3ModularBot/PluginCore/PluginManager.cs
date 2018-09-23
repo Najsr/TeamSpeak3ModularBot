@@ -13,9 +13,9 @@ namespace TeamSpeak3ModularBot.PluginCore
 {
     public class PluginManager
     {
-        public readonly List<IPlugin> Plugins = new List<IPlugin>();
+        private readonly List<IPlugin> _plugins = new List<IPlugin>();
 
-        internal readonly List<IPrivatePlugin> PrivatePlugins = new List<IPrivatePlugin>();
+        private readonly List<IAdminPlugin> _adminPlugins = new List<IAdminPlugin>();
 
         public readonly List<CommandStruct> CommandList = new List<CommandStruct>();
 
@@ -26,27 +26,30 @@ namespace TeamSpeak3ModularBot.PluginCore
             _queryRunner = qr;
         }
 
-        public void UnloadPlugins()
+        public int PluginsCount()
         {
-            Plugins.ForEach(x => x.Dispose());
-            Plugins.Clear();
+            return _plugins.Count;
         }
 
-        public bool UnloadPlugin(string name)
+        public string GetPluginList()
         {
-            var pluginToUnload = Plugins.Find(x => x.GetType().Name.Equals(name));
-            if (pluginToUnload == null)
-                return false;
-            pluginToUnload.Dispose();
-            return Plugins.Remove(pluginToUnload);
+            return string.Join(", ", _plugins.Select(x => x.GetType().Name).ToArray());
         }
 
         public void LoadPlugins()
         {
-            LoadInternalPlugins();
-            Console.WriteLine("{0} interal plugins loaded successfully", PrivatePlugins.Count);
             try
             {
+                var adminPlugins = Assembly.GetExecutingAssembly().GetTypes().Where(x => !x.IsAbstract && typeof(IAdminPlugin).IsAssignableFrom(x));
+                foreach (var adminPlugin in adminPlugins)
+                {
+                    var instance = (IAdminPlugin)Activator.CreateInstance(adminPlugin);
+                    instance.Ts3Instance = _queryRunner;
+                    instance.OnLoad(this);
+                    _adminPlugins.Add(instance);
+                    AddCustomMethods(adminPlugin, instance);
+                }
+                Console.WriteLine("Admin plugins loaded successfully!");
                 var plugins = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "plugins", "*.dll");
                 foreach (var plugin in plugins)
                 {
@@ -55,79 +58,79 @@ namespace TeamSpeak3ModularBot.PluginCore
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error occured during plugin load! Error message: {0}", ex.Message);
+                Console.WriteLine("Error occured during plugin loading! Error message: {0}", ex.Message);
             }
         }
 
-        public void LoadDll(string file)
+        private void LoadDll(string file)
         {
             var asm = Assembly.LoadFile(file);
             foreach (var type in asm.GetTypes())
             {
-                if (type.IsAbstract || !typeof(IPlugin).IsAssignableFrom(type) || Plugins.Any(x => x.GetType().Name == type.Name))
+                if (type.IsAbstract || !typeof(IPlugin).IsAssignableFrom(type) || _plugins.Any(x => x.GetType().Name == type.Name))
                     continue;
 
                 var instance = (IPlugin)Activator.CreateInstance(type);
                 instance.Ts3Instance = _queryRunner;
                 instance.OnLoad();
 
-                LoadClientCommandMethods(type, instance);
+                AddCustomMethods(type, instance);
                 Console.WriteLine("Plugin {0} ({1}) by {2} has been successfully loaded!", instance.GetType().Name, instance.Version, instance.Author);
-                Plugins.Add(instance);
+                _plugins.Add(instance);
             }
         }
 
-        private void LoadInternalPlugins()
+        private void AddCustomMethods(Type type, IPlugin instance)
         {
-            var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => string.Equals(t.Namespace, "TeamSpeak3ModularBot.Plugins", StringComparison.Ordinal)).ToList();
-            foreach (var type in types)
+            var methods = type.GetMethods()
+                .Where(m => m.GetCustomAttributes(typeof(ClientCommand), false).Length > 0 && m.Name != "OnLoad").ToArray();
+            if (methods.Length > 0)
             {
-                if (PrivatePlugins.Any(x => x.GetType().Name == type.Name))
-                    continue;
-
-                if (typeof(IPrivatePlugin).IsAssignableFrom(type))
+                foreach (var methodInfo in methods)
                 {
-                    var instance = (IPrivatePlugin)Activator.CreateInstance(type);
-                    instance.Ts3Instance = _queryRunner;
-                    instance.OnLoad();
-                    var methodInfo = type.GetMethod("OnPluginManager");
-                    if (methodInfo != null)
-                        methodInfo.Invoke(instance, new object[] { this });
-                    LoadClientCommandMethods(type, instance);
-                    PrivatePlugins.Add(instance);
+                    var attribute = (ClientCommand)methodInfo.GetCustomAttributes(typeof(ClientCommand), false)[0];
+                    CommandList.Add(new CommandStruct(instance, methodInfo, attribute));
                 }
             }
         }
 
-        private void LoadClientCommandMethods(Type type, IPlugin instance)
+        public bool UnloadPlugin(string name)
         {
-            var methods = type.GetMethods()
-                .Where(m => m.GetCustomAttributes(typeof(ClientCommand), false).Length > 0 && m.Name != "OnLoad").ToArray();
-            foreach (var methodInfo in methods)
+            var pluginIndex = _plugins.FindIndex(x => x.GetType().Name == name);
+            if (pluginIndex == -1)
+                return false;
+            var plugin = _plugins[pluginIndex];
+
+            for (var i = CommandList.Count - 1; i >= 0; i--)
             {
-                var attribute = (ClientCommand)methodInfo.GetCustomAttributes(typeof(ClientCommand), false)[0];
-                CommandList.Add(new CommandStruct(instance, methodInfo, attribute));
+                if (CommandList[i].Class != plugin)
+                    continue;
+                CommandList[i] = default(CommandStruct);
+                CommandList.RemoveAt(i);
             }
+            plugin.Dispose();
+            _plugins.RemoveAt(pluginIndex);
+            return true;
         }
 
         public struct CommandStruct
         {
-            private IPlugin Class { get; }
+            public IPlugin Class { get; }
 
             private MethodInfo Method { get; }
 
             public ClientCommand Command { get; }
 
-            public CommandStruct(IPlugin class_, MethodInfo methodname, ClientCommand command)
+            public CommandStruct(IPlugin class_, MethodInfo methodName, ClientCommand command)
             {
                 Class = class_;
-                Method = methodname;
+                Method = methodName;
                 Command = command;
             }
 
-            public object Invoke(MessageReceivedEventArgs eventArgs, Message m)
+            internal object Invoke(MessageReceivedEventArgs eArgs, string[] v)
             {
-                return Method.Invoke(Class, new object[] { eventArgs, m });
+                return Method.Invoke(Class, new object[] { eArgs, v });
             }
         }
     }
