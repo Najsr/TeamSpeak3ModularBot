@@ -12,17 +12,9 @@ namespace TeamSpeak3ModularBot
 
         private static TeamSpeak3Bot _teamSpeak3Bot;
 
-        private static ConsoleEventDelegate _handler;
-
         private delegate bool ConsoleEventDelegate(int eventType);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
-
         private static void Main()
         {
-            _handler = ConsoleEventCallback;
-            SetConsoleCtrlHandler(_handler, true);
             Console.SetOut(new PrefixedWriter());
             Console.Title = "TS3ModularBot";
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;

@@ -28,13 +28,13 @@ namespace TeamSpeak3ModularBot.Plugins
             _pluginManager = pluginManager;
         }
 
-        [ClientCommand("plugin list", ClientCommand.MessageMode.Private)]
+        [ClientCommand("plugin list", ClientCommand.MessageMode.Private, 145)]
         public void ListPlugins(MessageReceivedEventArgs eventArgs, string[] e)
         {
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"I have currently loaded {_pluginManager.PluginsCount()} plugin(s). {_pluginManager.GetPluginList()}");
         }
 
-        [ClientCommand("plugin load", ClientCommand.MessageMode.Private)]
+        [ClientCommand("plugin load", ClientCommand.MessageMode.Private, 145)]
         public void LoadPlugin(MessageReceivedEventArgs eventArgs, string[] e)
         {
             if (e.Length == 0)
@@ -47,7 +47,7 @@ namespace TeamSpeak3ModularBot.Plugins
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"I have loaded {e[0]}, please check console");
         }
 
-        [ClientCommand("plugin reload", ClientCommand.MessageMode.Private)]
+        [ClientCommand("plugin reload", ClientCommand.MessageMode.Private, 145)]
         public void ReloadPlugin(MessageReceivedEventArgs eventArgs, string[] e)
         {
             if (e.Length == 0)
@@ -60,7 +60,7 @@ namespace TeamSpeak3ModularBot.Plugins
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"I have reloaded plugin {e[0]}");
         }
 
-        [ClientCommand("plugin unload", ClientCommand.MessageMode.Private)]
+        [ClientCommand("plugin unload", ClientCommand.MessageMode.Private, 145)]
         public void UnloadPlugin(MessageReceivedEventArgs eventArgs, string[] e)
         {
             if (e.Length == 0)
@@ -73,8 +73,6 @@ namespace TeamSpeak3ModularBot.Plugins
             var successfulRemoval = _pluginManager.UnloadPlugin(e[0]);
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"{(successfulRemoval ? "Successfully" : "Unsuccessfully")} removed plugin {e[0]}.");
         }
-
-
 
         public void OnLoad() { }
     }

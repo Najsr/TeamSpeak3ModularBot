@@ -15,7 +15,7 @@ namespace TS3ModularBotPluginTest
         public void OnLoad()
         {
             _timer.Elapsed += TimerOnElapsed;
-            _timer.Enabled = true;
+            //_timer.Enabled = true;
         }
 
         public void Dispose()
