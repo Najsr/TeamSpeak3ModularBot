@@ -33,33 +33,28 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         public string GetPluginList()
         {
-            return string.Join(", ", _plugins.Select(x => x.GetType().Name).ToArray());
+            return string.Join(", ", _plugins.OrderBy(x => x.GetType().Name).Select(x => x.GetType().Name).ToArray());
         }
 
         public void LoadPlugins()
         {
-            try
+
+            var adminPlugins = Assembly.GetExecutingAssembly().GetTypes().Where(x => !x.IsAbstract && typeof(IAdminPlugin).IsAssignableFrom(x));
+            foreach (var adminPlugin in adminPlugins)
             {
-                var adminPlugins = Assembly.GetExecutingAssembly().GetTypes().Where(x => !x.IsAbstract && typeof(IAdminPlugin).IsAssignableFrom(x));
-                foreach (var adminPlugin in adminPlugins)
-                {
-                    var instance = (IAdminPlugin)Activator.CreateInstance(adminPlugin);
-                    instance.Ts3Instance = _queryRunner;
-                    instance.OnLoad(this);
-                    _adminPlugins.Add(instance);
-                    AddCustomMethods(adminPlugin, instance);
-                }
-                Console.WriteLine("Admin plugins loaded successfully!");
-                var plugins = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "plugins", "*.dll");
-                foreach (var plugin in plugins)
-                {
-                    LoadDll(plugin);
-                }
+                var instance = (IAdminPlugin)Activator.CreateInstance(adminPlugin);
+                instance.Ts3Instance = _queryRunner;
+                instance.OnLoad(this);
+                _adminPlugins.Add(instance);
+                AddCustomMethods(adminPlugin, instance);
             }
-            catch (Exception ex)
+            Console.WriteLine("Admin plugins loaded successfully!");
+            var plugins = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "plugins", "*.dll");
+            foreach (var plugin in plugins)
             {
-                Console.WriteLine("Error occured during plugin loading! Error message: {0}", ex.Message);
+                LoadDll(plugin);
             }
+
         }
 
         public void LoadDll(string file)
@@ -67,16 +62,25 @@ namespace TeamSpeak3ModularBot.PluginCore
             var asm = Assembly.LoadFile(file);
             foreach (var type in asm.GetTypes())
             {
-                if (type.IsAbstract || !typeof(IPlugin).IsAssignableFrom(type) || _plugins.Any(x => x.GetType().Name == type.Name))
-                    continue;
+                try
+                {
+                    if (type.IsAbstract || !typeof(IPlugin).IsAssignableFrom(type) ||
+                        _plugins.Any(x => x.GetType().Name == type.Name))
+                        continue;
 
-                var instance = (IPlugin)Activator.CreateInstance(type);
-                instance.Ts3Instance = _queryRunner;
-                instance.OnLoad();
+                    var instance = (IPlugin)Activator.CreateInstance(type);
+                    instance.Ts3Instance = _queryRunner;
+                    instance.OnLoad();
 
-                AddCustomMethods(type, instance);
-                Console.WriteLine("Plugin {0} ({1}) by {2} has been successfully loaded!", instance.GetType().Name, instance.Version, instance.Author);
-                _plugins.Add(instance);
+                    AddCustomMethods(type, instance);
+                    Console.WriteLine("Plugin {0} ({1}) by {2} has been successfully loaded!", instance.GetType().Name,
+                        instance.Version, instance.Author);
+                    _plugins.Add(instance);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error occured during plugin loading! Bad plugin: {type.Name} Error message: {ex.Message}");
+                }
             }
         }
 
@@ -110,6 +114,8 @@ namespace TeamSpeak3ModularBot.PluginCore
             }
             plugin.Dispose();
             _plugins.RemoveAt(pluginIndex);
+            plugin = null;
+            GC.Collect();
             return true;
         }
 
@@ -119,7 +125,7 @@ namespace TeamSpeak3ModularBot.PluginCore
             if (pluginIndex == -1)
                 return;
             var plugin = _plugins[pluginIndex];
-            var newPlugin = (IPlugin) Activator.CreateInstance(plugin.GetType());
+            var newPlugin = (IPlugin)Activator.CreateInstance(plugin.GetType());
             plugin.Dispose();
             newPlugin.Ts3Instance = _queryRunner;
             newPlugin.OnLoad();

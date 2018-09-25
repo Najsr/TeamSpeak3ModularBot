@@ -57,8 +57,13 @@ namespace TeamSpeak3ModularBot.PluginCore
             {
                 if (commandStruct.Command.Groups.Length != 0)
                 {
-                    if(Ts3Bot.GetServerGroupClientList(145, true).Values.All(x => x.UniqueId != eArgs.InvokerUniqueId))
-                        return;
+                    var databaseId = Ts3Bot.GetClientNameAndDatabaseIdByUniqueId(eArgs.InvokerUniqueId).ClientDatabaseId;
+                    if (databaseId != null)
+                    {
+                        var clientGroups = Ts3Bot.GetServerGroupsByClientId((uint)databaseId).Select(x => (int)x.Id).ToArray();
+                        if (!commandStruct.Command.Groups.Intersect(clientGroups).Any())
+                            return;
+                    }
                 }
                 var msg = message;
                 msg.Params = msg.Params.Skip(commandStruct.Command.Message.Count(y => y == ' ') + 1).ToArray();
