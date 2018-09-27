@@ -11,11 +11,10 @@ namespace TS3ModularBotPluginTest
     internal class TimedPlugin : IPlugin
     {
         private readonly Timer _timer = new Timer(1000);
-        private int _i;
         public void OnLoad()
         {
             _timer.Elapsed += TimerOnElapsed;
-            //_timer.Enabled = true;
+            _timer.Enabled = true;
         }
 
         public void Dispose()
@@ -25,19 +24,9 @@ namespace TS3ModularBotPluginTest
             _timer.Dispose();
         }
 
-        [ClientCommand("hi", ClientCommand.MessageMode.Private | ClientCommand.MessageMode.Channel)]
-        public void SendMessage(MessageReceivedEventArgs eventArgs, Message e)
-        {
-            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
-                $"hello there {eventArgs.InvokerNickname}");
-        }
-
-
         private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            Console.WriteLine($"Test {_i}");
-            _i++;
-            //Ts3Instance.SendTextMessage(MessageTarget.Client, 12, DateTime.Now.ToLongTimeString());
+            Ts3Instance.SendTextMessage(MessageTarget.Client, 12, DateTime.Now.ToLongTimeString());
         }
 
         public string Author => "Nicer";
