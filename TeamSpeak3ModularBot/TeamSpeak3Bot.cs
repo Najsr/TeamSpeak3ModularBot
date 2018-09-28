@@ -118,6 +118,7 @@ namespace TeamSpeak3ModularBot
             {
                 if (Connected)
                 {
+                    _pluginManager.Dispose();
                     QueryDispatcher.Disconnect();
                     QueryDispatcher?.Dispose();
                     QueryRunner?.Dispose();

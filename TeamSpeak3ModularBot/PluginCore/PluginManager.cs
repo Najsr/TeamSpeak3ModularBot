@@ -11,7 +11,7 @@ using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TeamSpeak3ModularBot.PluginCore
 {
-    public class PluginManager
+    public class PluginManager : IDisposable
     {
         private readonly List<IPlugin> _plugins = new List<IPlugin>();
 
@@ -131,6 +131,14 @@ namespace TeamSpeak3ModularBot.PluginCore
             newPlugin.OnLoad();
             _plugins[pluginIndex] = newPlugin;
 
+        }
+
+        public void Dispose()
+        {
+            CommandList.ForEach(x => x = default(CommandStruct));
+            CommandList.Clear();
+            _plugins.ForEach(x => x.Dispose());
+            _adminPlugins.ForEach(x => x.Dispose());
         }
 
         public struct CommandStruct

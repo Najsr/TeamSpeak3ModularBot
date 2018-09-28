@@ -12,9 +12,9 @@ namespace TeamSpeak3ModularBot
 
         private static TeamSpeak3Bot _teamSpeak3Bot;
 
-        private delegate bool ConsoleEventDelegate(int eventType);
         private static void Main()
         {
+            Console.CancelKeyPress += ConsoleOnCancelKeyPress;
             Console.SetOut(new PrefixedWriter());
             Console.Title = "TS3ModularBot";
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -40,11 +40,9 @@ namespace TeamSpeak3ModularBot
             Console.ReadLine();
         }
 
-        private static bool ConsoleEventCallback(int eventType)
+        private static void ConsoleOnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
-            if (eventType == 2)
-                _teamSpeak3Bot.Dispose();
-            return false;
+            _teamSpeak3Bot.Dispose();
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
