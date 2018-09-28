@@ -4,6 +4,7 @@ using TeamSpeak3ModularBot.PluginCore;
 using TeamSpeak3ModularBotPlugin.Helper;
 using TS3QueryLib.Core.CommandHandling;
 using TS3QueryLib.Core.Server;
+using TS3QueryLib.Core.Server.Entities;
 using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TeamSpeak3ModularBot.Plugins
@@ -41,6 +42,16 @@ namespace TeamSpeak3ModularBot.Plugins
                 else
                     Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, "You have no commands available!");
             }
+        }
+
+        [ClientCommand("rename", ClientCommand.MessageMode.Private, 145)]
+        public void Rename(MessageReceivedEventArgs eventArgs, string[] e)
+        {
+            if (e.Length == 0)
+                return;
+            var response = Ts3Instance.UpdateCurrentQueryClient(new ClientModification { Nickname = e[0] });
+            if (!response.IsErroneous)
+                Console.WriteLine("Changed name to {0}", e[0]);
         }
 
         public void OnLoad() { }

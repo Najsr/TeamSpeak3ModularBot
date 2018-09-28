@@ -32,15 +32,5 @@ namespace TS3ModularBotPluginTest
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
                 $"Hello {eventArgs.InvokerNickname}");
         }
-
-        [ClientCommand("rename", ClientCommand.MessageMode.Private)]
-        public void Rename(MessageReceivedEventArgs eventArgs, string[] e)
-        {
-            if (e.Length == 0)
-                return;
-            var response = Ts3Instance.UpdateCurrentQueryClient(new ClientModification { Nickname = e[0]});
-            if(!response.IsErroneous)
-                Console.WriteLine("Changed name to {0}", e[0]);
-        }
     }
 }
