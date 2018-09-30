@@ -9,24 +9,14 @@ using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TeamSpeak3ModularBot.Plugins
 {
-    internal class CommonStuff : IAdminPlugin
+    internal class CommonStuff : AdminPlugin
     {
-        private PluginManager _pluginManager;
-
-        public void Dispose()
+        public CommonStuff(QueryRunner queryRunner, PluginManager manager) : base(queryRunner, manager)
         {
 
         }
 
-        public string Author => "Nicer";
-
-        public Version Version => new Version(1, 0, 0, 0);
-
-        public QueryRunner Ts3Instance { get; set; }
-        public void OnLoad(PluginManager pluginManager)
-        {
-            _pluginManager = pluginManager;
-        }
+        public override string Author => "Nicer";
 
         [ClientCommand("commands", ClientCommand.MessageMode.Private)]
         public void ListPlugins(MessageReceivedEventArgs eventArgs, string[] e)
@@ -36,9 +26,9 @@ namespace TeamSpeak3ModularBot.Plugins
             if (clientDatabaseId != null)
             {
                 var groups = Ts3Instance.GetServerGroupsByClientId((uint)clientDatabaseId).Select(x => (int)x.Id).ToArray();
-                var commands = _pluginManager.CommandList.Where(x => x.Command.Groups.Intersect(groups).Any() || !x.Command.Groups.Any()).ToArray();
+                var commands = PluginManager.CommandList.Where(x => x.Command.Groups.Intersect(groups).Any() || !x.Command.Groups.Any()).ToArray();
                 if (commands.Any())
-                    Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, "Available commands: " + string.Join(", ", commands.Select(x => "!" + x.Command.Message)));
+                    Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, "Available commands: " + string.Join(", ", commands.OrderBy(x => x.Command.Message).Select(x => "!" + x.Command.Message)));
                 else
                     Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, "You have no commands available!");
             }
@@ -53,7 +43,5 @@ namespace TeamSpeak3ModularBot.Plugins
             if (!response.IsErroneous)
                 Console.WriteLine("Changed name to {0}", e[0]);
         }
-
-        public void OnLoad() { }
     }
 }

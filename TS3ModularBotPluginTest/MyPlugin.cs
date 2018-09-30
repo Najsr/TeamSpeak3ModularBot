@@ -8,29 +8,42 @@ using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TS3ModularBotPluginTest
 {
-    public class MyPlugin : IPlugin
+    public class MyPlugin : Plugin
     {
-        public string Author => "Nicer";
-
-        public Version Version => new Version(1, 0, 0, 0);
-
-        public QueryRunner Ts3Instance { get; set; }
-
-        public void OnLoad()
+        public MyPlugin(QueryRunner queryRunner) : base(queryRunner)
         {
 
         }
 
-        public void Dispose()
-        {
+        public override string Author => "Nicer";
 
-        }
+        protected override QueryRunner Ts3Instance { get; set; }
 
         [ClientCommand("hello", ClientCommand.MessageMode.Private | ClientCommand.MessageMode.Channel)]
         public void SendMessage(MessageReceivedEventArgs eventArgs, string[] e)
         {
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
-                $"Hello {eventArgs.InvokerNickname}");
+                $"Hello {eventArgs.InvokerNickname}.");
+        }
+
+        [ClientCommand("config get", ClientCommand.MessageMode.Private | ClientCommand.MessageMode.Channel)]
+        public void GetConfig(MessageReceivedEventArgs eventArgs, string[] e)
+        {
+            if (e.Length == 0)
+                return;
+            var value = GetConfigValue(e[0]);
+            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
+                $"{e[0]}'s value is {GetConfigValue(e[0])}");
+        }
+
+        [ClientCommand("config set", ClientCommand.MessageMode.Private | ClientCommand.MessageMode.Channel)]
+        public void SetConfig(MessageReceivedEventArgs eventArgs, string[] e)
+        {
+            if (e.Length < 2)
+                return;
+            SetConfigValue(e[0], e[1]);
+            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
+                $"{e[0]}'s value is {GetConfigValue(e[0])}");
         }
     }
 }

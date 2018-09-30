@@ -9,29 +9,22 @@ using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TeamSpeak3ModularBot.Plugins
 {
-    internal class PluginAdministration : IAdminPlugin
+    internal class PluginAdministration : AdminPlugin
     {
-        private PluginManager _pluginManager;
-
-        public void Dispose()
+        public PluginAdministration(QueryRunner queryRunner, PluginManager manager) : base(queryRunner, manager)
         {
 
         }
 
-        public string Author => "Nicer";
+        public override string Author => "Nicer";
 
         public Version Version => new Version(1, 0, 0, 0);
 
-        public QueryRunner Ts3Instance { get; set; }
-        public void OnLoad(PluginManager pluginManager)
-        {
-            _pluginManager = pluginManager;
-        }
 
         [ClientCommand("plugin list", ClientCommand.MessageMode.Private, 145)]
         public void ListPlugins(MessageReceivedEventArgs eventArgs, string[] e)
         {
-            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"I have currently loaded {_pluginManager.PluginsCount()} plugin(s). {_pluginManager.GetPluginList()}");
+            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"I have currently loaded {PluginManager.PluginsCount()} plugin(s). {PluginManager.GetPluginList()}");
         }
 
         [ClientCommand("plugin load", ClientCommand.MessageMode.Private, 145)]
@@ -43,7 +36,7 @@ namespace TeamSpeak3ModularBot.Plugins
                     "You must specify which dll file to load!");
                 return;
             }
-            _pluginManager.LoadDll(e[0]);
+            PluginManager.LoadDll(e[0]);
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"I have loaded {e[0]}, please check console");
         }
 
@@ -56,7 +49,7 @@ namespace TeamSpeak3ModularBot.Plugins
                     "You must specify which plugin to reload!");
                 return;
             }
-            _pluginManager.ReloadPlugin(e[0]);
+            PluginManager.ReloadPlugin(e[0]);
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"I have reloaded plugin {e[0]}");
         }
 
@@ -70,10 +63,8 @@ namespace TeamSpeak3ModularBot.Plugins
                 return;
             }
 
-            var successfulRemoval = _pluginManager.UnloadPlugin(e[0]);
+            var successfulRemoval = PluginManager.UnloadPlugin(e[0]);
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"{(successfulRemoval ? "Successfully" : "Unsuccessfully")} removed plugin {e[0]}.");
         }
-
-        public void OnLoad() { }
     }
 }

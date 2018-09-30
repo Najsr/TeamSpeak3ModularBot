@@ -13,9 +13,9 @@ namespace TeamSpeak3ModularBot.PluginCore
 {
     public class PluginManager : IDisposable
     {
-        private readonly List<IPlugin> _plugins = new List<IPlugin>();
+        private readonly List<Plugin> _plugins = new List<Plugin>();
 
-        private readonly List<IAdminPlugin> _adminPlugins = new List<IAdminPlugin>();
+        private readonly List<AdminPlugin> _adminPlugins = new List<AdminPlugin>();
 
         public readonly List<CommandStruct> CommandList = new List<CommandStruct>();
 
@@ -39,12 +39,10 @@ namespace TeamSpeak3ModularBot.PluginCore
         public void LoadPlugins()
         {
 
-            var adminPlugins = Assembly.GetExecutingAssembly().GetTypes().Where(x => !x.IsAbstract && typeof(IAdminPlugin).IsAssignableFrom(x));
+            var adminPlugins = Assembly.GetExecutingAssembly().GetTypes().Where(x => !x.IsAbstract && typeof(AdminPlugin).IsAssignableFrom(x));
             foreach (var adminPlugin in adminPlugins)
             {
-                var instance = (IAdminPlugin)Activator.CreateInstance(adminPlugin);
-                instance.Ts3Instance = _queryRunner;
-                instance.OnLoad(this);
+                var instance = (AdminPlugin)Activator.CreateInstance(adminPlugin, _queryRunner, this);
                 _adminPlugins.Add(instance);
                 AddCustomMethods(adminPlugin, instance);
             }
@@ -64,17 +62,14 @@ namespace TeamSpeak3ModularBot.PluginCore
             {
                 try
                 {
-                    if (type.IsAbstract || !typeof(IPlugin).IsAssignableFrom(type) ||
+                    if (type.IsAbstract || !typeof(Plugin).IsAssignableFrom(type) ||
                         _plugins.Any(x => x.GetType().Name == type.Name))
                         continue;
 
-                    var instance = (IPlugin)Activator.CreateInstance(type);
-                    instance.Ts3Instance = _queryRunner;
-                    instance.OnLoad();
+                    var instance = (Plugin)Activator.CreateInstance(type, _queryRunner);
 
                     AddCustomMethods(type, instance);
-                    Console.WriteLine("Plugin {0} ({1}) by {2} has been successfully loaded!", instance.GetType().Name,
-                        instance.Version, instance.Author);
+                    Console.WriteLine($"Plugin {instance.GetType().Name} by {instance.Author} has been successfully loaded!");
                     _plugins.Add(instance);
                 }
                 catch (Exception ex)
@@ -84,7 +79,7 @@ namespace TeamSpeak3ModularBot.PluginCore
             }
         }
 
-        private void AddCustomMethods(Type type, IPlugin instance)
+        private void AddCustomMethods(Type type, Plugin instance)
         {
             var methods = type.GetMethods()
                 .Where(m => m.GetCustomAttributes(typeof(ClientCommand), false).Length > 0 && m.Name != "OnLoad").ToArray();
@@ -125,10 +120,8 @@ namespace TeamSpeak3ModularBot.PluginCore
             if (pluginIndex == -1)
                 return;
             var plugin = _plugins[pluginIndex];
-            var newPlugin = (IPlugin)Activator.CreateInstance(plugin.GetType());
+            var newPlugin = (Plugin)Activator.CreateInstance(plugin.GetType(), _queryRunner);
             plugin.Dispose();
-            newPlugin.Ts3Instance = _queryRunner;
-            newPlugin.OnLoad();
             _plugins[pluginIndex] = newPlugin;
 
         }
@@ -143,13 +136,13 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         public struct CommandStruct
         {
-            public IPlugin Class { get; }
+            public Plugin Class { get; }
 
             private MethodInfo Method { get; }
 
             public ClientCommand Command { get; }
 
-            public CommandStruct(IPlugin class_, MethodInfo methodName, ClientCommand command)
+            public CommandStruct(Plugin class_, MethodInfo methodName, ClientCommand command)
             {
                 Class = class_;
                 Method = methodName;
