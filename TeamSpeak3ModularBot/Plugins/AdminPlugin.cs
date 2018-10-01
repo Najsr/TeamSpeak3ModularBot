@@ -7,7 +7,7 @@ namespace TeamSpeak3ModularBot.Plugins
 {
     public abstract class AdminPlugin : Plugin
     {
-        protected virtual PluginManager PluginManager { get; }
+        protected PluginManager PluginManager { get; }
 
         protected AdminPlugin(QueryRunner queryRunner, PluginManager manager) : base(queryRunner)
         {

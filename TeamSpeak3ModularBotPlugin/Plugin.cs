@@ -13,7 +13,7 @@ namespace TeamSpeak3ModularBotPlugin
 {
     public class Plugin : IDisposable
     {
-        private Dictionary<string, object> _config;
+        private readonly Dictionary<string, object> _config;
 
         protected Plugin(QueryRunner queryRunner)
         {
@@ -39,13 +39,13 @@ namespace TeamSpeak3ModularBotPlugin
 
         public virtual string Author { get; }
 
-        protected virtual QueryRunner Ts3Instance { get; set; }
+        protected QueryRunner Ts3Instance { get; }
 
         private string GetConfigPath
         {
             get
             {
-                var file = new FileInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\\plugins\configs\" +
+                var file = new FileInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/plugins/configs/" +
                            GetType().Name +
                            ".json");
                 file.Directory?.Create();

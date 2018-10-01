@@ -57,7 +57,6 @@
     <Compile Include="PluginCore\CommandManager.cs" />
     <Compile Include="PluginCore\PluginManager.cs" />
     <Compile Include="Plugins\AdminPlugin.cs" />
-    <Compile Include="Plugins\IAdminPlugin.cs" />
     <Compile Include="Plugins\CommonStuff.cs" />
     <Compile Include="Plugins\PluginAdministration.cs" />
     <Compile Include="PrefixedWriter.cs" />

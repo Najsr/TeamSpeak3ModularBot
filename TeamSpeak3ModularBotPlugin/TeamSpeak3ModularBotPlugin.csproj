@@ -50,7 +50,6 @@
   <ItemGroup>
     <Compile Include="Helper\ClientCommand.cs" />
     <Compile Include="Helper\Message.cs" />
-    <Compile Include="IPlugin.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

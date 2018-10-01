@@ -17,8 +17,6 @@ namespace TS3ModularBotPluginTest
 
         public override string Author => "Nicer";
 
-        protected override QueryRunner Ts3Instance { get; set; }
-
         [ClientCommand("hello", ClientCommand.MessageMode.Private | ClientCommand.MessageMode.Channel)]
         public void SendMessage(MessageReceivedEventArgs eventArgs, string[] e)
         {
