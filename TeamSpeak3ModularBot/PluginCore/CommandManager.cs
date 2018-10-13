@@ -52,8 +52,7 @@ namespace TeamSpeak3ModularBot.PluginCore
         {
             var commands = PluginManager.CommandList
                 .Where(x => (x.Command.MessageType & messageMode) == messageMode
-                            && string.Join(" ", message.Params).ToLower().StartsWith(x.Command.Message))
-                .ToList();
+                            && string.Join(" ", message.Params).ToLower().StartsWith(x.Command.Message));
             foreach (var commandStruct in commands)
             {
                 if (commandStruct.Command.Groups.Length != 0)
@@ -61,9 +60,9 @@ namespace TeamSpeak3ModularBot.PluginCore
                     var databaseId = Ts3Bot.GetClientNameAndDatabaseIdByUniqueId(eArgs.InvokerUniqueId).ClientDatabaseId;
                     if (databaseId != null)
                     {
-                        var clientGroups = Ts3Bot.GetServerGroupsByClientId((uint)databaseId).Select(x => (int)x.Id).ToArray();
+                        var clientGroups = Ts3Bot.GetServerGroupsByClientId(databaseId.Value).Select(x => (int)x.Id).ToArray();
                         if (!commandStruct.Command.Groups.Intersect(clientGroups).Any())
-                            return;
+                            continue;
                     }
                 }
                 var msg = message;

@@ -75,18 +75,12 @@ namespace TeamSpeak3ModularBot
             QueryRunner.RegisterForNotifications(ServerNotifyRegisterEvent.TextPrivate);
             QueryRunner.RegisterForNotifications(ServerNotifyRegisterEvent.TextServer);
             QueryRunner.RegisterForNotifications(ServerNotifyRegisterEvent.TokenUsed);
-            QueryRunner.Notifications.ClientMessageReceived += NotificationsOnClientMessageReceived;
 
             Console.WriteLine("Successfully connected! It took [{0}:{1}:{2}.{3}]", _stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds, _stopwatch.Elapsed.Milliseconds);
             Console.WriteLine("Loading plugins...");
             _pluginManager.LoadPlugins();
             CommandManager = new CommandManager(QueryRunner, _pluginManager);
             Console.WriteLine("All plugins have been loaded.");
-        }
-
-        private void NotificationsOnClientMessageReceived(object sender, MessageReceivedEventArgs messageReceivedEventArgs)
-        {
-
         }
 
         #region QueryDispatcher_Errors

@@ -138,7 +138,7 @@ namespace TeamSpeak3ModularBot.PluginCore
         {
             public Plugin Class { get; }
 
-            private MethodInfo Method { get; }
+            public MethodInfo Method { get; }
 
             public ClientCommand Command { get; }
 
