@@ -8,7 +8,6 @@ using TS3QueryLib.Core.Common.Responses;
 using TS3QueryLib.Core.Communication;
 using TS3QueryLib.Core.Server;
 using TS3QueryLib.Core.Server.Entities;
-using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TeamSpeak3ModularBot
 {

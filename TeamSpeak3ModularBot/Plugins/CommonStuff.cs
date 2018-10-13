@@ -18,7 +18,7 @@ namespace TeamSpeak3ModularBot.Plugins
 
         public override string Author => "Nicer";
 
-        [ClientCommand("commands", ClientCommand.MessageMode.Private)]
+        [ClientCommand("commands")]
         public void ListPlugins(MessageReceivedEventArgs eventArgs, string[] e)
         {
             var clientDatabaseId = Ts3Instance
@@ -34,7 +34,7 @@ namespace TeamSpeak3ModularBot.Plugins
             }
         }
 
-        [ClientCommand("rename", ClientCommand.MessageMode.Private, 145)]
+        [ClientCommand("rename", 145)]
         public void Rename(MessageReceivedEventArgs eventArgs, string[] e)
         {
             if (e.Length == 0)

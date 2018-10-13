@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using TeamSpeak3ModularBot.Config;
 
 namespace TeamSpeak3ModularBot
 {
-    internal class Program
+    internal static class Program
     {
         private static Ts3Config _config;
 
@@ -47,7 +46,7 @@ namespace TeamSpeak3ModularBot
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Console.WriteLine("Unhandled exception: {0}", e.ExceptionObject.ToString());
+            Console.WriteLine("Unhandled exception: {0}", e.ExceptionObject);
             Console.ReadLine();
             Environment.Exit(0);
         }

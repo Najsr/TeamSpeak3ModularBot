@@ -29,7 +29,6 @@ namespace TS3ModularBotPluginTest
         {
             if (e.Length == 0)
                 return;
-            var value = GetConfigValue(e[0]);
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
                 $"{e[0]}'s value is {GetConfigValue(e[0])}");
         }

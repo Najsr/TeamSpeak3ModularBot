@@ -16,14 +16,28 @@ namespace TeamSpeak3ModularBotPlugin.Helper
         {
             Message = msg;
             MessageType = msgType;
-            Groups = @group == -1 ? new int[0] : new[] { @group };
+            Groups = group == -1 ? new int[0] : new[] { group };
         }
 
         public ClientCommand(string msg, MessageMode msgType, int[] groups)
         {
             Message = msg;
             MessageType = msgType;
-            Groups = groups;
+            Groups = groups ?? new int[0];
+        }
+
+        public ClientCommand(string msg, int group = -1, MessageMode msgType = MessageMode.All)
+        {
+            Message = msg;
+            MessageType = msgType;
+            Groups = group == -1 ? new int[0] : new[] { group };
+        }
+
+        public ClientCommand(string msg, int[] groups, MessageMode msgType = MessageMode.All)
+        {
+            Message = msg;
+            MessageType = msgType;
+            Groups = groups ?? new int[0];
         }
 
         [Flags]
@@ -31,7 +45,8 @@ namespace TeamSpeak3ModularBotPlugin.Helper
         {
             Private = 0x1,
             Channel = 0x2,
-            Server = 0x4
+            Server = 0x4,
+            All = 0x7
         }
     }
 }
