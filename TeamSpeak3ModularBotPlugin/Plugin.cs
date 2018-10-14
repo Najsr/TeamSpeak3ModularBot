@@ -18,13 +18,13 @@ namespace TeamSpeak3ModularBotPlugin
         protected Plugin(QueryRunner queryRunner)
         {
             Ts3Instance = queryRunner;
-            OnLoad();
             using (var sr = new StreamReader(GetConfigPath))
             {
                 _config = JsonConvert.DeserializeObject<Dictionary<string, object>>(sr.ReadToEnd());
             }
-            if(_config == null)
+            if (_config == null)
                 _config = new Dictionary<string, object>();
+            OnLoad();
         }
 
         public virtual void Dispose()

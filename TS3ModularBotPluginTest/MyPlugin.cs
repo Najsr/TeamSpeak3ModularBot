@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using TeamSpeak3ModularBotPlugin;
 using TS3QueryLib.Core.Server;
 using TeamSpeak3ModularBotPlugin.Helper;
@@ -29,8 +30,15 @@ namespace TS3ModularBotPluginTest
         {
             if (e.Length == 0)
                 return;
+            var value = GetConfigValue(e[0]);
+            if (value == null)
+            {
+                Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
+                    $"{e[0]} is not in the config!");
+                return;
+            }
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
-                $"{e[0]}'s value is {GetConfigValue(e[0])}");
+                $"{e[0]}'s value is {value}");
         }
 
         [ClientCommand("config set", ClientCommand.MessageMode.Private | ClientCommand.MessageMode.Channel)]
