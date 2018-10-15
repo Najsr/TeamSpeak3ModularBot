@@ -109,7 +109,6 @@ namespace TeamSpeak3ModularBot.PluginCore
             }
             plugin.Dispose();
             _plugins.RemoveAt(pluginIndex);
-            plugin = null;
             GC.Collect();
             return true;
         }
@@ -128,7 +127,6 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         public void Dispose()
         {
-            CommandList.ForEach(x => x = default(CommandStruct));
             CommandList.Clear();
             _plugins.ForEach(x => x.Dispose());
             _adminPlugins.ForEach(x => x.Dispose());

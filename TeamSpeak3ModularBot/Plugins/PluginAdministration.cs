@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using TeamSpeak3ModularBot.PluginCore;
-using TeamSpeak3ModularBotPlugin;
 using TeamSpeak3ModularBotPlugin.Helper;
 using TS3QueryLib.Core.CommandHandling;
 using TS3QueryLib.Core.Server;

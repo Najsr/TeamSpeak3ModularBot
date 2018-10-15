@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using TeamSpeak3ModularBotPlugin.Helper;
 using TS3QueryLib.Core.Server;
 using TS3QueryLib.Core.Server.Notification.EventArgs;
@@ -52,8 +51,8 @@ namespace TeamSpeak3ModularBot.PluginCore
         {
             var commands = PluginManager.CommandList
                 .Where(x => (x.Command.MessageType & messageMode) == messageMode
-                            && string.Join(" ", message.Params).ToLower().StartsWith(x.Command.Message));
-            foreach (var commandStruct in commands)
+                            && string.Join(" ", message.Params).ToLower().StartsWith(x.Command.Message)).ToList();
+            commands.ForEach(commandStruct =>
             {
                 if (commandStruct.Command.Groups.Length != 0)
                 {
@@ -62,13 +61,13 @@ namespace TeamSpeak3ModularBot.PluginCore
                     {
                         var clientGroups = Ts3Bot.GetServerGroupsByClientId(databaseId.Value).Select(x => (int)x.Id).ToArray();
                         if (!commandStruct.Command.Groups.Intersect(clientGroups).Any())
-                            continue;
+                            return;
                     }
                 }
                 var msg = message;
                 msg.Params = msg.Params.Skip(commandStruct.Command.Message.Count(y => y == ' ') + 1).ToArray();
                 commandStruct.Invoke(eArgs, msg.Params);
-            }
+            });
         }
 
         private bool IsItCommand(MessageReceivedEventArgs eArgs)
