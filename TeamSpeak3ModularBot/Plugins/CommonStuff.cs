@@ -25,8 +25,13 @@ namespace TeamSpeak3ModularBot.Plugins
                 .GetClientNameAndDatabaseIdByUniqueId(eventArgs.InvokerUniqueId).ClientDatabaseId;
             if (clientDatabaseId != null)
             {
-                var groups = Ts3Instance.GetServerGroupsByClientId((uint)clientDatabaseId).Select(x => (int)x.Id).ToArray();
-                var commands = PluginManager.CommandList.Where(x => x.Command.Groups.Intersect(groups).Any() || !x.Command.Groups.Any()).ToArray();
+                var groups = Ts3Instance.GetServerGroupsByClientId((uint)clientDatabaseId).Select(x => x.Name);
+                var commands = PluginManager.CommandList.Where(x =>
+                {
+                    if (x.ServerGroups == null)
+                        return x.ServerGroups == null;
+                    return (x.ServerGroups?.Groups.Intersect(groups).Any()).Value || x.ServerGroups == null;
+                }).ToArray();
                 if (commands.Any())
                     Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, "Available commands: " + string.Join(", ", commands.OrderBy(x => x.Command.Message).Select(x => "!" + x.Command.Message)));
                 else
@@ -34,7 +39,8 @@ namespace TeamSpeak3ModularBot.Plugins
             }
         }
 
-        [ClientCommand("rename", 145)]
+        [ServerGroups("Bot Manager")]
+        [ClientCommand("rename")]
         public void Rename(MessageReceivedEventArgs eventArgs, string[] e)
         {
             if (e.Length == 0)

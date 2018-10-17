@@ -21,6 +21,8 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         private readonly QueryRunner _queryRunner;
 
+        private readonly string _pluginDirectory = AppDomain.CurrentDomain.BaseDirectory + "plugins";
+
         public PluginManager(QueryRunner qr)
         {
             _queryRunner = qr;
@@ -38,7 +40,6 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         public void LoadPlugins()
         {
-
             var adminPlugins = Assembly.GetExecutingAssembly().GetTypes().Where(x => !x.IsAbstract && typeof(AdminPlugin).IsAssignableFrom(x));
             foreach (var adminPlugin in adminPlugins)
             {
@@ -47,12 +48,11 @@ namespace TeamSpeak3ModularBot.PluginCore
                 AddCustomMethods(adminPlugin, instance);
             }
             Console.WriteLine("Admin plugins loaded successfully!");
-            var plugins = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "plugins", "*.dll");
+            var plugins = Directory.GetFiles(_pluginDirectory, "*.dll");
             foreach (var plugin in plugins)
             {
                 LoadDll(plugin);
             }
-
         }
 
         public void LoadDll(string file)
@@ -69,7 +69,7 @@ namespace TeamSpeak3ModularBot.PluginCore
                     var instance = (Plugin)Activator.CreateInstance(type, _queryRunner);
 
                     AddCustomMethods(type, instance);
-                    Console.WriteLine($"Plugin {instance.GetType().Name} by {instance.Author} has been successfully loaded!");
+                    Console.WriteLine($"Plugin {instance.GetType().Name}{(instance.Author == null ? "" : " by " + instance.Author)} has been successfully loaded!");
                     _plugins.Add(instance);
                 }
                 catch (Exception ex)
@@ -82,13 +82,17 @@ namespace TeamSpeak3ModularBot.PluginCore
         private void AddCustomMethods(Type type, Plugin instance)
         {
             var methods = type.GetMethods()
-                .Where(m => m.GetCustomAttributes(typeof(ClientCommand), false).Length > 0 && m.Name != "OnLoad").ToArray();
-            if (methods.Length > 0)
+                .Where(m => m.GetCustomAttributes(typeof(ClientCommand), false).Length > 0 && m.Name != "OnLoad");
+
+            foreach (var method in methods)
             {
-                foreach (var methodInfo in methods)
+                if(method.Name == "OnLoad")
+                    continue;
+                var attribute = (ClientCommand)method.GetCustomAttributes(typeof(ClientCommand), false).FirstOrDefault();
+                var serverGroup = (ServerGroups)method.GetCustomAttributes(typeof(ServerGroups), false).FirstOrDefault();
+                if (attribute != null)
                 {
-                    var attribute = (ClientCommand)methodInfo.GetCustomAttributes(typeof(ClientCommand), false)[0];
-                    CommandList.Add(new CommandStruct(instance, methodInfo, attribute));
+                    CommandList.Add(new CommandStruct(instance, method, attribute, serverGroup));
                 }
             }
         }
@@ -140,11 +144,14 @@ namespace TeamSpeak3ModularBot.PluginCore
 
             public ClientCommand Command { get; }
 
-            public CommandStruct(Plugin class_, MethodInfo methodName, ClientCommand command)
+            public ServerGroups ServerGroups { get; }
+
+            public CommandStruct(Plugin class_, MethodInfo methodName, ClientCommand command, ServerGroups serverGroups = null)
             {
                 Class = class_;
                 Method = methodName;
                 Command = command;
+                ServerGroups = serverGroups;
             }
 
             internal object Invoke(MessageReceivedEventArgs eArgs, string[] v)

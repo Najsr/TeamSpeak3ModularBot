@@ -48,6 +48,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helper\ServerGroups.cs" />
     <Compile Include="Helper\ClientCommand.cs" />
     <Compile Include="Helper\Message.cs" />
     <Compile Include="Plugin.cs" />

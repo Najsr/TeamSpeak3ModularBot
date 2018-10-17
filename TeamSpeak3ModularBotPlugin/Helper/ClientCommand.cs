@@ -10,34 +10,10 @@ namespace TeamSpeak3ModularBotPlugin.Helper
 
         public MessageMode MessageType { get; }
 
-        public int[] Groups { get; }
-
-        public ClientCommand(string msg, MessageMode msgType, int group = -1)
+        public ClientCommand(string msg, MessageMode msgType = MessageMode.All)
         {
             Message = msg;
             MessageType = msgType;
-            Groups = group == -1 ? new int[0] : new[] { group };
-        }
-
-        public ClientCommand(string msg, MessageMode msgType, int[] groups)
-        {
-            Message = msg;
-            MessageType = msgType;
-            Groups = groups ?? new int[0];
-        }
-
-        public ClientCommand(string msg, int group = -1, MessageMode msgType = MessageMode.All)
-        {
-            Message = msg;
-            MessageType = msgType;
-            Groups = group == -1 ? new int[0] : new[] { group };
-        }
-
-        public ClientCommand(string msg, int[] groups, MessageMode msgType = MessageMode.All)
-        {
-            Message = msg;
-            MessageType = msgType;
-            Groups = groups ?? new int[0];
         }
 
         [Flags]

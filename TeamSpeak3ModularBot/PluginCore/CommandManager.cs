@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using TeamSpeak3ModularBotPlugin.Helper;
 using TS3QueryLib.Core.Server;
 using TS3QueryLib.Core.Server.Notification.EventArgs;
@@ -54,13 +55,14 @@ namespace TeamSpeak3ModularBot.PluginCore
                             && string.Join(" ", message.Params).ToLower().StartsWith(x.Command.Message)).ToList();
             commands.ForEach(commandStruct =>
             {
-                if (commandStruct.Command.Groups.Length != 0)
+                if (commandStruct.ServerGroups != null && commandStruct.ServerGroups.Groups.Length != 0)
                 {
                     var databaseId = Ts3Bot.GetClientNameAndDatabaseIdByUniqueId(eArgs.InvokerUniqueId).ClientDatabaseId;
                     if (databaseId != null)
                     {
-                        var clientGroups = Ts3Bot.GetServerGroupsByClientId(databaseId.Value).Select(x => (int)x.Id).ToArray();
-                        if (!commandStruct.Command.Groups.Intersect(clientGroups).Any())
+                        var clientGroups = Ts3Bot.GetServerGroupsByClientId(databaseId.Value)
+                            .Select(x => new {x.Id, x.Name}).ToDictionary(x => (int)x.Id, x => x.Name);
+                        if (!commandStruct.ServerGroups.Groups.Intersect(clientGroups.Select(x => x.Value)).Any())
                             return;
                     }
                 }
@@ -72,7 +74,7 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         private bool IsItCommand(MessageReceivedEventArgs eArgs)
         {
-            return !(eArgs.InvokerUniqueId == Uid || !eArgs.Message.StartsWith("!") || eArgs.Message.Length < 2);
+            return eArgs.InvokerUniqueId != Uid && eArgs.Message.StartsWith("!") && eArgs.Message.Length > 1;
         }
     }
 }
