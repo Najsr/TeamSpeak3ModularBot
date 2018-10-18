@@ -7,14 +7,17 @@ namespace TeamSpeak3ModularBotPlugin.Helper
     {
         public string[] Params { get; set; }
 
+        public string ParamString { get; }
+
         public Message(string message)
         {
-            var trimmedMessage = message.Trim();
+            var trimmedMessage = message.Trim().ToLower();
             if (!trimmedMessage.StartsWith("!") || trimmedMessage.Length < 2)
                 return;
 
             GetCommand(trimmedMessage.Substring(1), out var params_);
             Params = params_;
+            ParamString = Params != null ? string.Join(" ", Params) : null;
         }
 
         public static implicit operator Message(string message)
@@ -25,9 +28,8 @@ namespace TeamSpeak3ModularBotPlugin.Helper
         private string[] GetSsvParameters(string toSplit)
         {
             if (toSplit == string.Empty)
-            {
                 return null;
-            }
+
             var myRegex = new Regex(@"[ ](?=(?:[^""]*""[^""]*"")*[^""]*$)");
 
             return myRegex.Split(toSplit).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Replace("\"", "")).ToArray();

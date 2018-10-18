@@ -140,7 +140,7 @@ namespace TeamSpeak3ModularBot.PluginCore
         {
             public Plugin Class { get; }
 
-            public MethodInfo Method { get; }
+            private MethodInfo Method { get; }
 
             public ClientCommand Command { get; }
 
@@ -158,30 +158,31 @@ namespace TeamSpeak3ModularBot.PluginCore
             {
                 var parameters = Method.GetParameters();
                 var stringCount = 0;
-                var injectedParameters = new List<object>();
-                foreach (var parameter in parameters)
+                var injectedParameters = new object[parameters.Length];
+                for (var i = 0; i < parameters.Length; i++)
                 {
+                    var parameter = parameters[i];
                     var type = parameter.ParameterType;
                     if (type == typeof(MessageReceivedEventArgs))
-                        injectedParameters.Add(eArgs);
+                        injectedParameters[i] = eArgs;
                     else if (type == typeof(string[]))
-                        injectedParameters.Add(inputStrings);
+                        injectedParameters[i] = inputStrings;
                     else if (type == typeof(List<string>))
-                        injectedParameters.Add(inputStrings.ToList());
+                        injectedParameters[i] = inputStrings.ToList();
                     else if (type == typeof(uint))
-                        injectedParameters.Add(eArgs.InvokerClientId);
+                        injectedParameters[i] = eArgs.InvokerClientId;
                     else if (type == typeof(string))
                     {
                         var canBeNull = parameter.HasDefaultValue && parameter.DefaultValue == null;
                         if (inputStrings.Length > stringCount)
                         {
-                            injectedParameters.Add(inputStrings[stringCount]);
+                            injectedParameters[i] = inputStrings[stringCount];
                             stringCount++;
                         }
                         else
                         {
                             if (canBeNull)
-                                injectedParameters.Add(null);
+                                injectedParameters[i] = null;
                             else
                                 return;
                         }
@@ -190,7 +191,7 @@ namespace TeamSpeak3ModularBot.PluginCore
                         throw new Exception("Unknown parameter type");
                 }
 
-                Method.Invoke(Class, injectedParameters.ToArray());
+                Method.Invoke(Class, injectedParameters);
             }
         }
     }

@@ -49,7 +49,7 @@ namespace TS3ModularBotPluginTest
         [ClientCommand("uptime", MessageMode.Private | MessageMode.Channel)]
         public void Uptime(uint clId)
         {
-            Ts3Instance.SendTextMessage(MessageTarget.Client, clId, $"Been running for {(DateTime.Now - Process.GetCurrentProcess().StartTime)}");
+            Ts3Instance.SendTextMessage(MessageTarget.Client, clId, $"Been running for {DateTime.Now - Process.GetCurrentProcess().StartTime}");
         }
     }
 }

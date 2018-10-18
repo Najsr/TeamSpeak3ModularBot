@@ -46,7 +46,8 @@ namespace TeamSpeak3ModularBot.PluginCore
 
             var commands = PluginManager.CommandList
                 .Where(x => (x.Command.MessageType & messageMode) == messageMode
-                            && string.Join(" ", message.Params).ToLower().StartsWith(x.Command.Message)).ToList();
+                            && message.ParamString.StartsWith(x.Command.Message)).ToList();
+
             commands.ForEach(commandStruct =>
             {
                 if (commandStruct.ServerGroups != null && commandStruct.ServerGroups.Groups.Length != 0)
