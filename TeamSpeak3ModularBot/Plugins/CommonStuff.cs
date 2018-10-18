@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using TeamSpeak3ModularBot.PluginCore;
 using TeamSpeak3ModularBotPlugin.Helper;
 using TS3QueryLib.Core.CommandHandling;
@@ -41,11 +40,11 @@ namespace TeamSpeak3ModularBot.Plugins
 
         [ServerGroups("Bot Manager")]
         [ClientCommand("rename")]
-        public void Rename(MessageReceivedEventArgs eventArgs, string name)
+        public void Rename(uint clId, string name)
         {
             var response = Ts3Instance.UpdateCurrentQueryClient(new ClientModification { Nickname = name });
             if (!response.IsErroneous)
-                Console.WriteLine("Changed name to {0}", name);
+                Ts3Instance.SendTextMessage(MessageTarget.Client, clId, $"Changed name to {name}");
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using TeamSpeak3ModularBotPlugin;
+﻿using System;
+using System.Diagnostics;
+using TeamSpeak3ModularBotPlugin;
 using TS3QueryLib.Core.Server;
 using TeamSpeak3ModularBotPlugin.Helper;
 using TS3QueryLib.Core.CommandHandling;
@@ -42,6 +44,12 @@ namespace TS3ModularBotPluginTest
             SetConfigValue(key, value);
             Ts3Instance.SendTextMessage(MessageTarget.Client, clId,
                 $"{key}'s value is {(string)GetConfigValue(key)}");
+        }
+
+        [ClientCommand("uptime", MessageMode.Private | MessageMode.Channel)]
+        public void Uptime(uint clId)
+        {
+            Ts3Instance.SendTextMessage(MessageTarget.Client, clId, $"Been running for {(DateTime.Now - Process.GetCurrentProcess().StartTime)}");
         }
     }
 }
