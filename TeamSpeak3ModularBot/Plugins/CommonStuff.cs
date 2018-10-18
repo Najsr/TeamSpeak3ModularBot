@@ -19,7 +19,7 @@ namespace TeamSpeak3ModularBot.Plugins
         public override string Author => "Nicer";
 
         [ClientCommand("commands")]
-        public void ListPlugins(MessageReceivedEventArgs eventArgs, string[] e)
+        public void ListPlugins(MessageReceivedEventArgs eventArgs)
         {
             var clientDatabaseId = Ts3Instance
                 .GetClientNameAndDatabaseIdByUniqueId(eventArgs.InvokerUniqueId).ClientDatabaseId;
@@ -30,7 +30,7 @@ namespace TeamSpeak3ModularBot.Plugins
                 {
                     if (x.ServerGroups == null)
                         return x.ServerGroups == null;
-                    return (x.ServerGroups?.Groups.Intersect(groups).Any()).Value || x.ServerGroups == null;
+                    return (x.ServerGroups?.Groups.Intersect(groups).Any()).Value;
                 }).ToArray();
                 if (commands.Any())
                     Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, "Available commands: " + string.Join(", ", commands.OrderBy(x => x.Command.Message).Select(x => "!" + x.Command.Message)));
@@ -41,13 +41,11 @@ namespace TeamSpeak3ModularBot.Plugins
 
         [ServerGroups("Bot Manager")]
         [ClientCommand("rename")]
-        public void Rename(MessageReceivedEventArgs eventArgs, string[] e)
+        public void Rename(MessageReceivedEventArgs eventArgs, string name)
         {
-            if (e.Length == 0)
-                return;
-            var response = Ts3Instance.UpdateCurrentQueryClient(new ClientModification { Nickname = e[0] });
+            var response = Ts3Instance.UpdateCurrentQueryClient(new ClientModification { Nickname = name });
             if (!response.IsErroneous)
-                Console.WriteLine("Changed name to {0}", e[0]);
+                Console.WriteLine("Changed name to {0}", name);
         }
     }
 }

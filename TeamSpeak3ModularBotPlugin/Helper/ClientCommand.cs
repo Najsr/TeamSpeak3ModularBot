@@ -15,14 +15,14 @@ namespace TeamSpeak3ModularBotPlugin.Helper
             Message = msg;
             MessageType = msgType;
         }
+    }
 
-        [Flags]
-        public enum MessageMode
-        {
-            Private = 0x1,
-            Channel = 0x2,
-            Server = 0x4,
-            All = 0x7
-        }
+    [Flags]
+    public enum MessageMode
+    {
+        Private = 0x1,
+        Channel = 0x2,
+        Server = 0x4,
+        All = 0x7
     }
 }

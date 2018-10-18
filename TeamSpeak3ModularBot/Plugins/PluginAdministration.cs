@@ -19,14 +19,14 @@ namespace TeamSpeak3ModularBot.Plugins
         public Version Version => new Version(1, 0, 0, 0);
 
         [ServerGroups("Bot Manager")]
-        [ClientCommand("plugin list", ClientCommand.MessageMode.Private)]
+        [ClientCommand("plugin list", MessageMode.Private)]
         public void ListPlugins(MessageReceivedEventArgs eventArgs, string[] e)
         {
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"I have currently loaded {PluginManager.PluginsCount()} plugin(s). {PluginManager.GetPluginList()}");
         }
 
         [ServerGroups("Bot Manager")]
-        [ClientCommand("plugin load", ClientCommand.MessageMode.Private)]
+        [ClientCommand("plugin load", MessageMode.Private)]
         public void LoadPlugin(MessageReceivedEventArgs eventArgs, string[] e)
         {
             if (e.Length == 0)
@@ -40,7 +40,7 @@ namespace TeamSpeak3ModularBot.Plugins
         }
 
         [ServerGroups("Bot Manager")]
-        [ClientCommand("plugin reload", ClientCommand.MessageMode.Private)]
+        [ClientCommand("plugin reload", MessageMode.Private)]
         public void ReloadPlugin(MessageReceivedEventArgs eventArgs, string[] e)
         {
             if (e.Length == 0)
@@ -54,7 +54,7 @@ namespace TeamSpeak3ModularBot.Plugins
         }
 
         [ServerGroups("Bot Manager")]
-        [ClientCommand("plugin unload", ClientCommand.MessageMode.Private)]
+        [ClientCommand("plugin unload", MessageMode.Private)]
         public void UnloadPlugin(MessageReceivedEventArgs eventArgs, string[] e)
         {
             if (e.Length == 0)

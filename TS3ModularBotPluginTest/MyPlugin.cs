@@ -15,37 +15,33 @@ namespace TS3ModularBotPluginTest
 
         public override string Author => "Nicer";
 
-        [ClientCommand("hello", ClientCommand.MessageMode.Private | ClientCommand.MessageMode.Channel)]
-        public void SendMessage(MessageReceivedEventArgs eventArgs, string[] e)
+        [ClientCommand("hello", MessageMode.Private | MessageMode.Channel)]
+        public void SendMessage(MessageReceivedEventArgs eventArgs, string input = null)
         {
             Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
-                $"Hello {eventArgs.InvokerNickname}.");
+                $"Hello {eventArgs.InvokerNickname}. {(input != null ? "You just said: " + input : "")}");
         }
 
-        [ClientCommand("config get", ClientCommand.MessageMode.Private | ClientCommand.MessageMode.Channel)]
-        public void GetConfig(MessageReceivedEventArgs eventArgs, string[] e)
+        [ClientCommand("config get", MessageMode.Private | MessageMode.Channel)]
+        public void GetConfig(uint clId, string key)
         {
-            if (e.Length == 0)
-                return;
-            var value = GetConfigValue(e[0]);
+            var value = GetConfigValue(key);
             if (value == null)
             {
-                Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
-                    $"{e[0]} is not in the config!");
+                Ts3Instance.SendTextMessage(MessageTarget.Client, clId,
+                    $"{key} is not in the config!");
                 return;
             }
-            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
-                $"{e[0]}'s value is {value}");
+            Ts3Instance.SendTextMessage(MessageTarget.Client, clId,
+                $"{key}'s value is {value}");
         }
 
-        [ClientCommand("config set", ClientCommand.MessageMode.Private | ClientCommand.MessageMode.Channel)]
-        public void SetConfig(MessageReceivedEventArgs eventArgs, string[] e)
+        [ClientCommand("config set", MessageMode.Private | MessageMode.Channel)]
+        public void SetConfig(uint clId, string key, string value)
         {
-            if (e.Length < 2)
-                return;
-            SetConfigValue(e[0], e[1]);
-            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
-                $"{e[0]}'s value is {(string)GetConfigValue(e[0])}");
+            SetConfigValue(key, value);
+            Ts3Instance.SendTextMessage(MessageTarget.Client, clId,
+                $"{key}'s value is {(string)GetConfigValue(key)}");
         }
     }
 }

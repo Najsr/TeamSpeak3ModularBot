@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using TeamSpeak3ModularBotPlugin.Helper;
 using TS3QueryLib.Core.Server;
 using TS3QueryLib.Core.Server.Notification.EventArgs;
@@ -26,30 +25,25 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         private void NotificationsOnServerMessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            if (!IsItCommand(e))
-                return;
-            var message = new Message(e.Message);
-            Execute(ClientCommand.MessageMode.Server, e, message);
+            Execute(MessageMode.Server, e);
         }
 
         private void NotificationsOnChannelMessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            if (!IsItCommand(e))
-                return;
-            var message = new Message(e.Message);
-            Execute(ClientCommand.MessageMode.Channel, e, message);
+            Execute(MessageMode.Channel, e);
         }
 
         private void NotificationsOnClientMessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            if (!IsItCommand(e))
-                return;
-            var message = new Message(e.Message);
-            Execute(ClientCommand.MessageMode.Private, e, message);
+            Execute(MessageMode.Private, e);
         }
 
-        private void Execute(ClientCommand.MessageMode messageMode, MessageReceivedEventArgs eArgs, Message message)
+        private void Execute(MessageMode messageMode, MessageReceivedEventArgs eArgs)
         {
+            if (!IsItCommand(eArgs.Message))
+                return;
+            var message = new Message(eArgs.Message);
+
             var commands = PluginManager.CommandList
                 .Where(x => (x.Command.MessageType & messageMode) == messageMode
                             && string.Join(" ", message.Params).ToLower().StartsWith(x.Command.Message)).ToList();
@@ -72,9 +66,9 @@ namespace TeamSpeak3ModularBot.PluginCore
             });
         }
 
-        private bool IsItCommand(MessageReceivedEventArgs eArgs)
+        private bool IsItCommand(string message)
         {
-            return eArgs.InvokerUniqueId != Uid && eArgs.Message.StartsWith("!") && eArgs.Message.Length > 1;
+            return message != Uid && message.StartsWith("!") && message.Length > 1;
         }
     }
 }

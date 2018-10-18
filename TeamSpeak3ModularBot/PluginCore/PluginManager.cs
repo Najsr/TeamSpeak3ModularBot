@@ -86,7 +86,7 @@ namespace TeamSpeak3ModularBot.PluginCore
 
             foreach (var method in methods)
             {
-                if(method.Name == "OnLoad")
+                if (method.Name == "OnLoad")
                     continue;
                 var attribute = (ClientCommand)method.GetCustomAttributes(typeof(ClientCommand), false).FirstOrDefault();
                 var serverGroup = (ServerGroups)method.GetCustomAttributes(typeof(ServerGroups), false).FirstOrDefault();
@@ -154,9 +154,43 @@ namespace TeamSpeak3ModularBot.PluginCore
                 ServerGroups = serverGroups;
             }
 
-            internal object Invoke(MessageReceivedEventArgs eArgs, string[] v)
+            internal void Invoke(MessageReceivedEventArgs eArgs, string[] inputStrings)
             {
-                return Method.Invoke(Class, new object[] { eArgs, v });
+                var parameters = Method.GetParameters();
+                var stringCount = 0;
+                var injectedParameters = new List<object>();
+                foreach (var parameter in parameters)
+                {
+                    var type = parameter.ParameterType;
+                    if (type == typeof(MessageReceivedEventArgs))
+                        injectedParameters.Add(eArgs);
+                    else if (type == typeof(string[]))
+                        injectedParameters.Add(inputStrings);
+                    else if (type == typeof(List<string>))
+                        injectedParameters.Add(inputStrings.ToList());
+                    else if (type == typeof(uint))
+                        injectedParameters.Add(eArgs.InvokerClientId);
+                    else if (type == typeof(string))
+                    {
+                        var canBeNull = parameter.HasDefaultValue && parameter.DefaultValue == null;
+                        if (inputStrings.Length > stringCount)
+                        {
+                            injectedParameters.Add(inputStrings[stringCount]);
+                            stringCount++;
+                        }
+                        else
+                        {
+                            if (canBeNull)
+                                injectedParameters.Add(null);
+                            else
+                                return;
+                        }
+                    }
+                    else
+                        throw new Exception("Unknown parameter type");
+                }
+
+                Method.Invoke(Class, injectedParameters.ToArray());
             }
         }
     }
