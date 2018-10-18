@@ -171,9 +171,20 @@ namespace TeamSpeak3ModularBot.PluginCore
                         injectedParameters[i] = inputStrings.ToList();
                     else if (type == typeof(uint))
                         injectedParameters[i] = eArgs.InvokerClientId;
+                    else if (type == typeof(PluginManager))
+                        injectedParameters[i] = this;
                     else if (type == typeof(string))
                     {
                         var canBeNull = parameter.HasDefaultValue && parameter.DefaultValue == null;
+                        switch (parameter.Name.ToLower())
+                        {
+                            case "uniqueid":
+                                injectedParameters[i] = eArgs.InvokerUniqueId;
+                                continue;
+                            case "clientnickname":
+                                injectedParameters[i] = eArgs.InvokerNickname;
+                                continue;
+                        }
                         if (inputStrings.Length > stringCount)
                         {
                             injectedParameters[i] = inputStrings[stringCount];
@@ -190,7 +201,6 @@ namespace TeamSpeak3ModularBot.PluginCore
                     else
                         throw new Exception("Unknown parameter type");
                 }
-
                 Method.Invoke(Class, injectedParameters);
             }
         }

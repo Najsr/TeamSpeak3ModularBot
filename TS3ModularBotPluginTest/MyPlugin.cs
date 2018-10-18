@@ -18,10 +18,10 @@ namespace TS3ModularBotPluginTest
         public override string Author => "Nicer";
 
         [ClientCommand("hello", MessageMode.Private | MessageMode.Channel)]
-        public void SendMessage(MessageReceivedEventArgs eventArgs, string input = null)
+        public void SendMessage(string clientNickname, uint clId, string input = null)
         {
-            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
-                $"Hello {eventArgs.InvokerNickname}. {(input != null ? "You just said: " + input : "")}");
+            Ts3Instance.SendTextMessage(MessageTarget.Client, clId,
+                $"Hello {clientNickname}. {(input != null ? "You just said: " + input : "")}");
         }
 
         [ClientCommand("config get", MessageMode.Private | MessageMode.Channel)]

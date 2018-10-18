@@ -11,7 +11,7 @@ namespace TeamSpeak3ModularBotPlugin.Helper
 
         public Message(string message)
         {
-            var trimmedMessage = message.Trim().ToLower();
+            var trimmedMessage = message.Trim();
             if (!trimmedMessage.StartsWith("!") || trimmedMessage.Length < 2)
                 return;
 
