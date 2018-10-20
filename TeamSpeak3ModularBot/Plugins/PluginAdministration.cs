@@ -1,6 +1,6 @@
 ﻿using System;
 using TeamSpeak3ModularBot.PluginCore;
-using TeamSpeak3ModularBotPlugin.Helper;
+using TeamSpeak3ModularBotPlugin.AttributeClasses;
 using TS3QueryLib.Core.CommandHandling;
 using TS3QueryLib.Core.Server;
 using TS3QueryLib.Core.Server.Notification.EventArgs;

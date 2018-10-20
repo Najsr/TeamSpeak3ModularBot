@@ -1,10 +1,9 @@
 ﻿using System.Linq;
 using TeamSpeak3ModularBot.PluginCore;
-using TeamSpeak3ModularBotPlugin.Helper;
+using TeamSpeak3ModularBotPlugin.AttributeClasses;
 using TS3QueryLib.Core.CommandHandling;
 using TS3QueryLib.Core.Server;
 using TS3QueryLib.Core.Server.Entities;
-using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TeamSpeak3ModularBot.Plugins
 {
@@ -18,10 +17,10 @@ namespace TeamSpeak3ModularBot.Plugins
         public override string Author => "Nicer";
 
         [ClientCommand("commands")]
-        public void ListPlugins(MessageReceivedEventArgs eventArgs)
+        public void ListPlugins(string uniqueId, uint clId)
         {
             var clientDatabaseId = Ts3Instance
-                .GetClientNameAndDatabaseIdByUniqueId(eventArgs.InvokerUniqueId).ClientDatabaseId;
+                .GetClientNameAndDatabaseIdByUniqueId(uniqueId).ClientDatabaseId;
             if (clientDatabaseId != null)
             {
                 var groups = Ts3Instance.GetServerGroupsByClientId((uint)clientDatabaseId).Select(x => x.Name);
@@ -32,9 +31,9 @@ namespace TeamSpeak3ModularBot.Plugins
                     return (x.ServerGroups?.Groups.Intersect(groups).Any()).Value;
                 }).ToArray();
                 if (commands.Any())
-                    Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, "Available commands: " + string.Join(", ", commands.OrderBy(x => x.Command.Message).Select(x => "!" + x.Command.Message)));
+                    Ts3Instance.SendTextMessage(MessageTarget.Client, clId, "Available commands: " + string.Join(", ", commands.OrderBy(x => x.Command.Message).Select(x => "!" + x.Command.Message)));
                 else
-                    Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, "You have no commands available!");
+                    Ts3Instance.SendTextMessage(MessageTarget.Client, clId, "You have no commands available!");
             }
         }
 

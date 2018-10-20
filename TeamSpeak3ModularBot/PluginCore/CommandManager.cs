@@ -1,11 +1,13 @@
-﻿using System.Linq;
-using TeamSpeak3ModularBotPlugin.Helper;
+﻿using System;
+using System.Linq;
+using TeamSpeak3ModularBotPlugin;
+using TeamSpeak3ModularBotPlugin.AttributeClasses;
 using TS3QueryLib.Core.Server;
 using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TeamSpeak3ModularBot.PluginCore
 {
-    internal class CommandManager
+    internal class CommandManager : IDisposable
     {
         private QueryRunner Ts3Bot { get; }
 
@@ -40,7 +42,7 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         private void Execute(MessageMode messageMode, MessageReceivedEventArgs eArgs)
         {
-            if (!IsItCommand(eArgs.Message))
+            if (!IsItCommand(eArgs.Message, eArgs.InvokerUniqueId))
                 return;
             var message = new Message(eArgs.Message);
 
@@ -67,9 +69,16 @@ namespace TeamSpeak3ModularBot.PluginCore
             });
         }
 
-        private bool IsItCommand(string message)
+        private bool IsItCommand(string message, string uid)
         {
-            return message != Uid && message.StartsWith("!") && message.Length > 1;
+            return uid != Uid && message.StartsWith("!") && message.Length > 1;
+        }
+
+        public void Dispose()
+        {
+            Ts3Bot.Notifications.ClientMessageReceived -= NotificationsOnClientMessageReceived;
+            Ts3Bot.Notifications.ChannelMessageReceived -= NotificationsOnChannelMessageReceived;
+            Ts3Bot.Notifications.ServerMessageReceived -= NotificationsOnServerMessageReceived;
         }
     }
 }

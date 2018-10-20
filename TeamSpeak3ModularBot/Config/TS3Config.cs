@@ -13,7 +13,5 @@
         public string DisplayName { get; set; }
 
         public ushort ServerPort { get; set; }
-
-        public bool IgnoreWarnings { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using TeamSpeak3ModularBot.Plugins;
 using TeamSpeak3ModularBotPlugin;
-using TeamSpeak3ModularBotPlugin.Helper;
+using TeamSpeak3ModularBotPlugin.AttributeClasses;
 using TS3QueryLib.Core.Server;
 using TS3QueryLib.Core.Server.Notification.EventArgs;
 

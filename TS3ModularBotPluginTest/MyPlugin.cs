@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using TeamSpeak3ModularBotPlugin;
+using TeamSpeak3ModularBotPlugin.AttributeClasses;
 using TS3QueryLib.Core.Server;
-using TeamSpeak3ModularBotPlugin.Helper;
 using TS3QueryLib.Core.CommandHandling;
-using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TS3ModularBotPluginTest
 {

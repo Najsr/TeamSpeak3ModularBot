@@ -24,7 +24,6 @@ Create a file called __config.cfg__ and paste in this code:
     "Host": "my_server.com",
     "Port": 10011,
     "DisplayName": ".NET modular bot",
-    "ServerPort": 9987,
-    "IgnoreWarnings": false
+    "ServerPort": 9987
 }
 ```
