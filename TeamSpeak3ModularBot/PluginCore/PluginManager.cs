@@ -7,7 +7,6 @@ using TeamSpeak3ModularBot.Plugins;
 using TeamSpeak3ModularBotPlugin;
 using TeamSpeak3ModularBotPlugin.AttributeClasses;
 using TS3QueryLib.Core.Server;
-using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TeamSpeak3ModularBot.PluginCore
 {
@@ -35,7 +34,7 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         public string GetPluginList()
         {
-            return string.Join(", ", _plugins.OrderBy(x => x.GetType().Name).Select(x => x.GetType().Name).ToArray());
+            return string.Join(", ", _plugins.OrderBy(x => x.GetType().Name).Select(x => x.GetType().Name));
         }
 
         public void LoadPlugins()
@@ -86,13 +85,12 @@ namespace TeamSpeak3ModularBot.PluginCore
 
             foreach (var method in methods)
             {
-                if (method.Name == "OnLoad")
-                    continue;
-                var attribute = (ClientCommand)method.GetCustomAttributes(typeof(ClientCommand), false).FirstOrDefault();
+                var attributes = (ClientCommand[]) method.GetCustomAttributes(typeof(ClientCommand), false);
                 var serverGroup = (ServerGroups)method.GetCustomAttributes(typeof(ServerGroups), false).FirstOrDefault();
-                if (attribute != null)
+                foreach (var clientCommand in attributes)
                 {
-                    CommandList.Add(new CommandStruct(instance, method, attribute, serverGroup));
+                    if(clientCommand != null)
+                        CommandList.Add(new CommandStruct(_queryRunner, instance, method, clientCommand, serverGroup));
                 }
             }
         }
@@ -104,29 +102,31 @@ namespace TeamSpeak3ModularBot.PluginCore
                 return false;
             var plugin = _plugins[pluginIndex];
 
-            for (var i = CommandList.Count - 1; i >= 0; i--)
+            CommandList.ForEach(x =>
             {
-                if (CommandList[i].Class != plugin)
-                    continue;
-                CommandList[i] = default(CommandStruct);
-                CommandList.RemoveAt(i);
-            }
+                if (x.Class == plugin)
+                {
+                    CommandList.Remove(x);
+                    x.Dispose();
+                }
+            });
+
             plugin.Dispose();
             _plugins.RemoveAt(pluginIndex);
             GC.Collect();
             return true;
         }
 
-        public void ReloadPlugin(string name)
+        public bool ReloadPlugin(string name)
         {
             var pluginIndex = _plugins.FindIndex(x => x.GetType().Name == name);
             if (pluginIndex == -1)
-                return;
+                return false;
             var plugin = _plugins[pluginIndex];
             var newPlugin = (Plugin)Activator.CreateInstance(plugin.GetType(), _queryRunner);
             plugin.Dispose();
             _plugins[pluginIndex] = newPlugin;
-
+            return true;
         }
 
         public void Dispose()
@@ -134,75 +134,6 @@ namespace TeamSpeak3ModularBot.PluginCore
             CommandList.Clear();
             _plugins.ForEach(x => x.Dispose());
             _adminPlugins.ForEach(x => x.Dispose());
-        }
-
-        public struct CommandStruct
-        {
-            public Plugin Class { get; }
-
-            private MethodInfo Method { get; }
-
-            public ClientCommand Command { get; }
-
-            public ServerGroups ServerGroups { get; }
-
-            public CommandStruct(Plugin class_, MethodInfo methodName, ClientCommand command, ServerGroups serverGroups = null)
-            {
-                Class = class_;
-                Method = methodName;
-                Command = command;
-                ServerGroups = serverGroups;
-            }
-
-            internal void Invoke(MessageReceivedEventArgs eArgs, string[] inputStrings)
-            {
-                var parameters = Method.GetParameters();
-                var stringCount = 0;
-                var injectedParameters = new object[parameters.Length];
-                for (var i = 0; i < parameters.Length; i++)
-                {
-                    var parameter = parameters[i];
-                    var type = parameter.ParameterType;
-                    if (type == typeof(MessageReceivedEventArgs))
-                        injectedParameters[i] = eArgs;
-                    else if (type == typeof(string[]))
-                        injectedParameters[i] = inputStrings;
-                    else if (type == typeof(List<string>))
-                        injectedParameters[i] = inputStrings.ToList();
-                    else if (type == typeof(uint))
-                        injectedParameters[i] = eArgs.InvokerClientId;
-                    else if (type == typeof(PluginManager))
-                        injectedParameters[i] = this;
-                    else if (type == typeof(string))
-                    {
-                        var canBeNull = parameter.HasDefaultValue && parameter.DefaultValue == null;
-                        switch (parameter.Name.ToLower())
-                        {
-                            case "uniqueid":
-                                injectedParameters[i] = eArgs.InvokerUniqueId;
-                                continue;
-                            case "clientnickname":
-                                injectedParameters[i] = eArgs.InvokerNickname;
-                                continue;
-                        }
-                        if (inputStrings.Length > stringCount)
-                        {
-                            injectedParameters[i] = inputStrings[stringCount];
-                            stringCount++;
-                        }
-                        else
-                        {
-                            if (canBeNull)
-                                injectedParameters[i] = null;
-                            else
-                                return;
-                        }
-                    }
-                    else
-                        throw new Exception("Unknown parameter type");
-                }
-                Method.Invoke(Class, injectedParameters);
-            }
         }
     }
 }

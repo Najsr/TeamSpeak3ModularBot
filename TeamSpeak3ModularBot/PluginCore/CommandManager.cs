@@ -65,7 +65,7 @@ namespace TeamSpeak3ModularBot.PluginCore
                 }
                 var msg = message;
                 msg.Params = msg.Params.Skip(commandStruct.Command.Message.Count(y => y == ' ') + 1).ToArray();
-                commandStruct.Invoke(eArgs, msg.Params);
+                commandStruct.Invoke(eArgs, msg.Params, messageMode);
             });
         }
 

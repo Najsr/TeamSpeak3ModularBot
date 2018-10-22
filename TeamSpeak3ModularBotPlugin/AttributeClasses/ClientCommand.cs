@@ -10,8 +10,11 @@ namespace TeamSpeak3ModularBotPlugin.AttributeClasses
 
         public MessageMode MessageType { get; }
 
-        public ClientCommand(string msg, MessageMode msgType = MessageMode.All)
+        public string OnFailedMessage { get; }
+
+        public ClientCommand(string msg, MessageMode msgType = MessageMode.All, string onFailedMessage = null)
         {
+            OnFailedMessage = onFailedMessage;
             Message = msg;
             MessageType = msgType;
         }

@@ -20,15 +20,9 @@ namespace TeamSpeak3ModularBotPlugin
             }
             if (_config == null)
                 _config = new Dictionary<string, object>();
-            OnLoad();
         }
 
         public virtual void Dispose()
-        {
-
-        }
-
-        protected virtual void OnLoad()
         {
 
         }

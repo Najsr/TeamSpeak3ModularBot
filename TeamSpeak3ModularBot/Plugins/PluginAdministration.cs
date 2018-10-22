@@ -1,9 +1,7 @@
-﻿using System;
-using TeamSpeak3ModularBot.PluginCore;
+﻿using TeamSpeak3ModularBot.PluginCore;
 using TeamSpeak3ModularBotPlugin.AttributeClasses;
 using TS3QueryLib.Core.CommandHandling;
 using TS3QueryLib.Core.Server;
-using TS3QueryLib.Core.Server.Notification.EventArgs;
 
 namespace TeamSpeak3ModularBot.Plugins
 {
@@ -14,58 +12,36 @@ namespace TeamSpeak3ModularBot.Plugins
 
         }
 
-        public override string Author => "Nicer";
-
-        public Version Version => new Version(1, 0, 0, 0);
-
         [ServerGroups("Bot Manager")]
         [ClientCommand("plugin list", MessageMode.Private)]
-        public void ListPlugins(MessageReceivedEventArgs eventArgs, string[] e)
+        public void ListPlugins(uint clId)
         {
-            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"I have currently loaded {PluginManager.PluginsCount()} plugin(s). {PluginManager.GetPluginList()}");
+            Ts3Instance.SendTextMessage(MessageTarget.Client, clId, $"I have currently loaded {PluginManager.PluginsCount()} plugin(s). {PluginManager.GetPluginList()}");
         }
 
         [ServerGroups("Bot Manager")]
-        [ClientCommand("plugin load", MessageMode.Private)]
-        public void LoadPlugin(MessageReceivedEventArgs eventArgs, string[] e)
+        [ClientCommand("plugin load", MessageMode.Private, "You must specify which dll file to load!")]
+        public void LoadPlugin(uint clId, string plugin)
         {
-            if (e.Length == 0)
-            {
-                Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
-                    "You must specify which dll file to load!");
-                return;
-            }
-            PluginManager.LoadDll(e[0]);
-            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"I have loaded {e[0]}, please check console");
+            PluginManager.LoadDll(plugin);
+            Ts3Instance.SendTextMessage(MessageTarget.Client, clId, $"I have loaded {plugin}, please check console");
         }
 
         [ServerGroups("Bot Manager")]
-        [ClientCommand("plugin reload", MessageMode.Private)]
-        public void ReloadPlugin(MessageReceivedEventArgs eventArgs, string[] e)
+        [ClientCommand("plugin reload", MessageMode.Private, "You must specify which plugin to reload!")]
+        public void ReloadPlugin(uint clId, string plugin)
         {
-            if (e.Length == 0)
-            {
-                Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
-                    "You must specify which plugin to reload!");
-                return;
-            }
-            PluginManager.ReloadPlugin(e[0]);
-            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"I have reloaded plugin {e[0]}");
+            var success = PluginManager.ReloadPlugin(plugin);
+            Ts3Instance.SendTextMessage(MessageTarget.Client, clId, $"I have {(success ? "successfully" : "failed to ")} reloaded plugin {plugin}");
         }
 
         [ServerGroups("Bot Manager")]
-        [ClientCommand("plugin unload", MessageMode.Private)]
-        public void UnloadPlugin(MessageReceivedEventArgs eventArgs, string[] e)
+        [ClientCommand("plugin unload", MessageMode.Private, "You must specify which plugin to unload!")]
+        public void UnloadPlugin(uint clId, string plugin)
         {
-            if (e.Length == 0)
-            {
-                Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId,
-                    "You must specify which plugin to unload!");
-                return;
-            }
 
-            var successfulRemoval = PluginManager.UnloadPlugin(e[0]);
-            Ts3Instance.SendTextMessage(MessageTarget.Client, eventArgs.InvokerClientId, $"{(successfulRemoval ? "Successfully" : "Unsuccessfully")} removed plugin {e[0]}.");
+            var successfulRemoval = PluginManager.UnloadPlugin(plugin);
+            Ts3Instance.SendTextMessage(MessageTarget.Client, clId, $"{(successfulRemoval ? "Successfully" : "Unsuccessfully")} removed plugin {plugin}.");
         }
     }
 }
