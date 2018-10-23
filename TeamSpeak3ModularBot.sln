@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TS3ModularBotPluginTest", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpeak3ModularBotPlugin", "TeamSpeak3ModularBotPlugin\TeamSpeak3ModularBotPlugin.csproj", "{C43B088E-7A12-454F-8AC8-3A1F3830D339}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TS3QueryLib.Core.Framework", "TS3QueryLib.Net\TS3QueryLib.Core.Framework\TS3QueryLib.Core.Framework.csproj", "{FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C43B088E-7A12-454F-8AC8-3A1F3830D339}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C43B088E-7A12-454F-8AC8-3A1F3830D339}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C43B088E-7A12-454F-8AC8-3A1F3830D339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

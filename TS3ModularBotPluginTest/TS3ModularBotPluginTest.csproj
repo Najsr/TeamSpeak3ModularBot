@@ -44,7 +44,7 @@
     </Reference>
     <Reference Include="TS3QueryLib.Core.Framework, Version=1.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TS3QueryTest\Libs\TS3QueryLib.Core.Framework.dll</HintPath>
+      <HintPath>..\TS3QueryLib.Net\TS3QueryLib.Core.Framework\bin\Debug\TS3QueryLib.Core.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

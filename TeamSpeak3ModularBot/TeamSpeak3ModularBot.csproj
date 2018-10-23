@@ -48,8 +48,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\TeamSpeak3ModularBotPlugin.dll</HintPath>
     </Reference>
-    <Reference Include="TS3QueryLib.Core.Framework">
-      <HintPath>..\..\TS3QueryLib.Net-master\TS3QueryLib.Core.Framework\bin\Release\TS3QueryLib.Core.Framework.dll</HintPath>
+    <Reference Include="TS3QueryLib.Core.Framework, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TS3QueryLib.Net\TS3QueryLib.Core.Framework\bin\Debug\TS3QueryLib.Core.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
