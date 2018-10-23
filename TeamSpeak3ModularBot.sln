@@ -4,10 +4,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpeak3ModularBot", "TeamSpeak3ModularBot\TeamSpeak3ModularBot.csproj", "{C78033C0-EBB7-4599-B033-1D944F4D97CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F} = {FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F}
+		{C43B088E-7A12-454F-8AC8-3A1F3830D339} = {C43B088E-7A12-454F-8AC8-3A1F3830D339}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TS3ModularBotPluginTest", "TS3ModularBotPluginTest\TS3ModularBotPluginTest.csproj", "{EC3A6423-C3AC-4FAB-B377-7D5A0BA09E9A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F} = {FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F}
+		{C43B088E-7A12-454F-8AC8-3A1F3830D339} = {C43B088E-7A12-454F-8AC8-3A1F3830D339}
+		{C78033C0-EBB7-4599-B033-1D944F4D97CD} = {C78033C0-EBB7-4599-B033-1D944F4D97CD}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpeak3ModularBotPlugin", "TeamSpeak3ModularBotPlugin\TeamSpeak3ModularBotPlugin.csproj", "{C43B088E-7A12-454F-8AC8-3A1F3830D339}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F} = {FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TS3QueryLib.Core.Framework", "TS3QueryLib.Net\TS3QueryLib.Core.Framework\TS3QueryLib.Core.Framework.csproj", "{FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F}"
 EndProject
