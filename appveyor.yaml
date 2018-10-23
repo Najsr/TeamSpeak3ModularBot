@@ -1,5 +1,0 @@
-build:
-  project: TeamSpeak3ModularBot.sln
-
-install:
-  git submodule update --init --recursive
