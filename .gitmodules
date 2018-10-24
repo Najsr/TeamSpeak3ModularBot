@@ -1,4 +1,0 @@
-[submodule "TS3QueryLib.Net"]
-	path = TS3QueryLib.Net
-	url = https://github.com/Scordo/TS3QueryLib.Net
-	branch = master
