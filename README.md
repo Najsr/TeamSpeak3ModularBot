@@ -8,7 +8,7 @@ A simple to use auto loading bot with many features!
 
 This module requires the following modules/libraries:
 
-* [TS3QueryLib.Net](https://github.com/Scordo/TS3QueryLib.Net) - already included with License
+* [TS3QueryLib.Net](https://github.com/Scordo/TS3QueryLib.Net) - already included (please read it's license)
 
 ## Installation
 
