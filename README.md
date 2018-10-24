@@ -16,7 +16,7 @@ Download latest version of Modular Bot and build it. After you are done, you hav
 
 ## Configuration
 
-Create a file called __config.cfg__ and paste in this code:
+Create a file called __config.json__ and paste in this code and edit it by your login details...:
 ```
 {
     "Username": "serveradmin",
@@ -61,6 +61,7 @@ Create a file called __config.cfg__ and paste in this code:
     //MessageMode = MessageMode.All - defines on which type of chat it will be triggered (it is bit based enum, so bitwise operators can be used)
     //string onFailedMessage = null - replied to a executing user when he does not input enough parameters (defined by string parameters without default value)
     [ClientCommand("hello", MessageMode.Private | MessageMode.Channel)]
+    
     public void SendMessage(string clientNickname, uint clId, string input = null)
     {
         Ts3Instance.SendTextMessage(MessageTarget.Client, clId,
