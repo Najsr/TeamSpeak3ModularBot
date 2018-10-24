@@ -40,11 +40,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="TeamSpeak3ModularBotPlugin">
-      <HintPath>..\TeamSpeak3ModularBot\bin\Debug\TeamSpeak3ModularBotPlugin.dll</HintPath>
+      <HintPath>..\TeamSpeak3ModularBotPlugin\bin\Debug\TeamSpeak3ModularBotPlugin.dll</HintPath>
     </Reference>
-    <Reference Include="TS3QueryLib.Core.Framework, Version=1.2.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TS3QueryLib.Net\TS3QueryLib.Core.Framework\bin\Debug\TS3QueryLib.Core.Framework.dll</HintPath>
+    <Reference Include="TS3QueryLib.Core.Framework">
+      <HintPath>..\TS3QueryLib.Core.Framework\bin\Debug\TS3QueryLib.Core.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -53,7 +52,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)bin\Debug\$(TargetFileName)" "$(SolutionDir)TeamSpeak3ModularBot\bin\Debug\plugins\" /Y /I
-xcopy "$(ProjectDir)bin\Debug\$(ProjectName).pdb" "$(SolutionDir)TeamSpeak3ModularBot\bin\Debug\" /Y /I</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(ProjectDir)bin\$(ConfigurationName)\$(TargetFileName)" "$(SolutionDir)TeamSpeak3ModularBot\bin\$(ConfigurationName)\plugins\" /Y /I
+xcopy "$(ProjectDir)bin\$(ConfigurationName)\$(ProjectName).pdb" "$(SolutionDir)TeamSpeak3ModularBot\bin\$(ConfigurationName)\" /Y /I</PostBuildEvent>
   </PropertyGroup>
 </Project>

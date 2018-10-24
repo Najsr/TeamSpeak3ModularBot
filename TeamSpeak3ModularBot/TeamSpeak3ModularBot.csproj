@@ -46,11 +46,11 @@
     <Reference Include="System.Xml" />
     <Reference Include="TeamSpeak3ModularBotPlugin, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\TeamSpeak3ModularBotPlugin.dll</HintPath>
+      <HintPath>..\TeamSpeak3ModularBotPlugin\bin\Debug\TeamSpeak3ModularBotPlugin.dll</HintPath>
     </Reference>
     <Reference Include="TS3QueryLib.Core.Framework, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TS3QueryLib.Net\TS3QueryLib.Core.Framework\bin\Debug\TS3QueryLib.Core.Framework.dll</HintPath>
+      <HintPath>..\TS3QueryLib.Core.Framework\bin\Debug\TS3QueryLib.Core.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

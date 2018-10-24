@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpeak3ModularBotPlugin"
 		{FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F} = {FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TS3QueryLib.Core.Framework", "TS3QueryLib.Net\TS3QueryLib.Core.Framework\TS3QueryLib.Core.Framework.csproj", "{FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TS3QueryLib.Core.Framework", "TS3QueryLib.Core.Framework\TS3QueryLib.Core.Framework.csproj", "{FFD6FC39-DCD3-48CC-9E43-FAD303A7E58F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
