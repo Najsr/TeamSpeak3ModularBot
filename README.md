@@ -43,6 +43,7 @@ Create a file called __config.json__ and paste in this code and edit it by your 
     
 ## Example Plugin
 ```
+ //You must derive from Plugin class otherwise it will not be loaded.
  public class MyPlugin : Plugin
  {
     public MyPlugin(QueryRunner queryRunner) : base(queryRunner)
