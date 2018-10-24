@@ -47,14 +47,14 @@ Create a file called __config.json__ and paste in this code and edit it by your 
  {
     public MyPlugin(QueryRunner queryRunner) : base(queryRunner)
     {
-		//Can be used for initializing since it is a constructor
+    //Can be used for initializing since it is a constructor
     }
 
-	//Author of plugin; Not required
+    //Author of plugin; Not required
     public override string Author => "Only ME";
 
-	//Limits execution for specified groups
-	[ServerGroups("Server Admin", "Normal")]
+    //Limits execution for specified groups
+    [ServerGroups("Server Admin", "Normal")]
     //Implements chat command itself
     //Parameters: 
     //string Command - it is the command itself (if you want more on a single method, use more ClientCommand classes)
