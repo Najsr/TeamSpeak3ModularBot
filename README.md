@@ -29,14 +29,14 @@ Create a file called __config.json__ and paste in this code and edit it by your 
 ```
 ## Injectable data types (in Command's parameter)
 
-* [MessageReceivedEventArgs](https://github.com/Najsr/TeamSpeak3ModularBot/blob/c5bebf790687146bc055ab96b54d887cb3b7db21/TS3QueryLib.Core.Framework/Server/Notification/EventArgs/MessageReceivedEventArgs.cs) - whole received command
+* [MessageReceivedEventArgs](https://github.com/Najsr/TeamSpeak3ModularBot/blob/master/TS3QueryLib.Core.Framework/Server/Notification/EventArgs/MessageReceivedEventArgs.cs) - whole received command
 * string[] or List\<string\> - All the parameters passed separated by space
 * uint - clientID of client who executed the command
 * [PluginManager](https://github.com/Najsr/TeamSpeak3ModularBot/blob/master/TeamSpeak3ModularBot/PluginCore/PluginManager.cs) - Class used to manage plugins
-* [MessageTarget](https://github.com/Najsr/TeamSpeak3ModularBot/blob/c5bebf790687146bc055ab96b54d887cb3b7db21/TS3QueryLib.Core.Framework/CommandHandling/MessageTarget.cs) - Enum value that contains on which type of chat the command was received
+* [MessageTarget](https://github.com/Najsr/TeamSpeak3ModularBot/blob/master/TS3QueryLib.Core.Framework/CommandHandling/MessageTarget.cs) - Enum value that contains on which type of chat the command was received
 * string
     * if it has no default value set it is used as a required parameter
-    * if default value is null, it means that it is optional parameter
+    * if default value is null, it means that it is an optional parameter
     * if name of the string is __uniqueid__ then the bot injects invoker's UID
     * if name of the string is __clientnickname__ then the bot injects invoker's nickname
     * if invoker didn't pass enough parameters it will execute the __onFailedMessage__ string 
