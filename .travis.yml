@@ -1,6 +1,9 @@
 language: csharp
 solution: TeamSpeak3ModularBot.sln
 
+mono:
+  - latest
+
 branches:
   only:
     - master
