@@ -43,9 +43,8 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TS3QueryLib.Core.Framework, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TS3QueryLib.Core.Framework\bin\Debug\TS3QueryLib.Core.Framework.dll</HintPath>
+    <Reference Include="TS3QueryLib.Core.Framework">
+      <HintPath>..\CompiledItems\TS3QueryLib.Core.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +59,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)bin\Debug\$(TargetFileName)" "$(SolutionDir)TeamSpeak3ModularBot\bin\Debug\" /Y /I</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(TargetPath)" "$(SolutionDir)CompiledItems" /Y /I</PostBuildEvent>
   </PropertyGroup>
 </Project>
