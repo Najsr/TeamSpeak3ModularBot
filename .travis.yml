@@ -4,3 +4,5 @@ solution: TeamSpeak3ModularBot.sln
 branches:
   only:
     - master
+
+os: windows
