@@ -16,10 +16,8 @@ namespace TeamSpeak3ModularBotPlugin
             Ts3Instance = queryRunner;
             using (var sr = new StreamReader(GetConfigPath))
             {
-                _config = JsonConvert.DeserializeObject<Dictionary<string, object>>(sr.ReadToEnd());
+                _config = JsonConvert.DeserializeObject<Dictionary<string, object>>(sr.ReadToEnd()) ?? new Dictionary<string, object>();
             }
-            if (_config == null)
-                _config = new Dictionary<string, object>();
         }
 
         public virtual void Dispose()
@@ -55,9 +53,18 @@ namespace TeamSpeak3ModularBotPlugin
             return _config.ContainsKey(key) ? _config[key] : null;
         }
 
-        protected void SetConfigValue(string key, object value)
+        protected void SetConfigValue(string key, object value, bool save = true)
         {
             _config[key] = value;
+            if (save)
+            {
+                using (var sw = new StreamWriter(GetConfigPath))
+                    sw.WriteAsync(JsonConvert.SerializeObject(_config, Formatting.Indented));
+            }
+        }
+
+        protected void SaveConfig()
+        {
             using (var sw = new StreamWriter(GetConfigPath))
                 sw.WriteAsync(JsonConvert.SerializeObject(_config, Formatting.Indented));
         }
