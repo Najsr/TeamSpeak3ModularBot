@@ -55,6 +55,7 @@
     <Compile Include="Config\TS3Config.cs" />
     <Compile Include="PluginCore\CommandManager.cs" />
     <Compile Include="PluginCore\CommandStruct.cs" />
+    <Compile Include="PluginCore\PluginDomain.cs" />
     <Compile Include="PluginCore\PluginManager.cs" />
     <Compile Include="Plugins\AdminPlugin.cs" />
     <Compile Include="Plugins\CommonStuff.cs" />

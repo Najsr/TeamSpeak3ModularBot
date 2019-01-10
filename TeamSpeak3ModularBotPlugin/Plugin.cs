@@ -7,7 +7,7 @@ using TS3QueryLib.Core.Server;
 
 namespace TeamSpeak3ModularBotPlugin
 {
-    public class Plugin : IDisposable
+    public class Plugin : MarshalByRefObject, IDisposable
     {
         private readonly Dictionary<string, object> _config;
 

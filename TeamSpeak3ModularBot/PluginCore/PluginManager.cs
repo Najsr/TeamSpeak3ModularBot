@@ -6,13 +6,14 @@ using System.Reflection;
 using TeamSpeak3ModularBot.Plugins;
 using TeamSpeak3ModularBotPlugin;
 using TeamSpeak3ModularBotPlugin.AttributeClasses;
+using TS3QueryLib.Core.CommandHandling;
 using TS3QueryLib.Core.Server;
 
 namespace TeamSpeak3ModularBot.PluginCore
 {
     public class PluginManager : IDisposable
     {
-        private readonly List<Plugin> _plugins = new List<Plugin>();
+        private readonly List<PluginDomain> _pluginDomains = new List<PluginDomain>();
 
         private readonly List<AdminPlugin> _adminPlugins = new List<AdminPlugin>();
 
@@ -29,12 +30,14 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         public int PluginsCount()
         {
-            return _plugins.Count;
+            return _pluginDomains.SelectMany(x => x.Plugins).Count();
         }
 
         public string GetPluginList()
         {
-            return string.Join(", ", _plugins.OrderBy(x => x.GetType().Name).Select(x => x.GetType().Name));
+            var plugins = new List<Plugin>();
+            _pluginDomains.ForEach(x => plugins.AddRange(x.Plugins));
+            return string.Join(", ", plugins.OrderBy(x => x.GetType().Name).Select(x => x.GetType().Name));
         }
 
         public void LoadPlugins()
@@ -56,26 +59,30 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         public void LoadDll(string file)
         {
-            var asm = Assembly.LoadFile(file);
-            foreach (var type in asm.GetTypes())
+            var domainInfo = new AppDomainSetup
+            {
+                ApplicationBase = Environment.CurrentDirectory + "/plugins",
+            };
+            var evidence = AppDomain.CurrentDomain.Evidence;
+            var domain = AppDomain.CreateDomain(new FileInfo(file).Name, evidence, domainInfo);
+            var asm = domain.Load(AssemblyName.GetAssemblyName(file));
+            var plugins = new List<Plugin>();
+            foreach (var type in asm.GetTypes().Where(x => !x.IsAbstract || typeof(Plugin).IsAssignableFrom(x) || plugins.All(y => y.GetType().Name != x.Name)))
             {
                 try
                 {
-                    if (type.IsAbstract || !typeof(Plugin).IsAssignableFrom(type) ||
-                        _plugins.Any(x => x.GetType().Name == type.Name))
-                        continue;
-
                     var instance = (Plugin)Activator.CreateInstance(type, _queryRunner);
 
                     AddCustomMethods(type, instance);
                     Console.WriteLine($"Plugin {instance.GetType().Name}{(instance.Author == null ? "" : " by " + instance.Author)} has been successfully loaded!");
-                    _plugins.Add(instance);
+                    plugins.Add(instance);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error occured during plugin loading! Bad plugin: {type.Name} Error message: {ex.Message}{Environment.NewLine}Stack trace: {ex.StackTrace}");
                 }
             }
+            _pluginDomains.Add(new PluginDomain(domain, plugins));
         }
 
         private void AddCustomMethods(Type type, Plugin instance)
@@ -85,54 +92,73 @@ namespace TeamSpeak3ModularBot.PluginCore
 
             foreach (var method in methods)
             {
-                var attributes = (ClientCommand[]) method.GetCustomAttributes(typeof(ClientCommand), false);
+                var attributes = (ClientCommand[])method.GetCustomAttributes(typeof(ClientCommand), false);
                 var serverGroup = (ServerGroups)method.GetCustomAttributes(typeof(ServerGroups), false).FirstOrDefault();
                 foreach (var clientCommand in attributes)
                 {
-                    if(clientCommand != null)
+                    if (clientCommand != null)
                         CommandList.Add(new CommandStruct(_queryRunner, instance, method, clientCommand, serverGroup));
                 }
             }
         }
 
+        private void UnloadCommandsFromPlugin(Plugin plugin)
+        {
+            var indexesToRemove = new List<int>();
+            for (var i = CommandList.Count - 1; i >= 0; i--)
+            {
+                var current = CommandList[i];
+                if (current.Class == plugin)
+                {
+                    indexesToRemove.Add(i);
+                    current.Dispose();
+                }
+            }
+
+            foreach (var i in indexesToRemove)
+            {
+                CommandList.RemoveAt(i);
+            }
+        }
+
         public bool UnloadPlugin(string name)
         {
-            var pluginIndex = _plugins.FindIndex(x => x.GetType().Name == name);
-            if (pluginIndex == -1)
+            var pluginDomain = _pluginDomains.FirstOrDefault(x => x.Plugins.Any(y => y.GetType().Name == name));
+            if (pluginDomain == null)
                 return false;
-            var plugin = _plugins[pluginIndex];
 
-            CommandList.ForEach(x =>
+            foreach (var plugin in pluginDomain.Plugins)
             {
-                if (x.Class == plugin)
-                {
-                    CommandList.Remove(x);
-                    x.Dispose();
-                }
-            });
-
-            plugin.Dispose();
-            _plugins.RemoveAt(pluginIndex);
+                UnloadCommandsFromPlugin(plugin);
+                plugin.Dispose();
+            }
+            AppDomain.Unload(pluginDomain.AppDomain);
+            _pluginDomains.Remove(pluginDomain);
             GC.Collect();
             return true;
         }
 
         public bool ReloadPlugin(string name)
         {
-            var pluginIndex = _plugins.FindIndex(x => x.GetType().Name == name);
-            if (pluginIndex == -1)
+            var pluginDomain = _pluginDomains.FirstOrDefault(x => x.Plugins.Any(y => y.GetType().Name == name));
+            var plugin = pluginDomain?.Plugins.First(x => x.GetType().Name == name);
+            if (plugin == null)
                 return false;
-            var plugin = _plugins[pluginIndex];
+            UnloadCommandsFromPlugin(plugin);
             var newPlugin = (Plugin)Activator.CreateInstance(plugin.GetType(), _queryRunner);
             plugin.Dispose();
-            _plugins[pluginIndex] = newPlugin;
+            pluginDomain.Plugins.Remove(plugin);
+            AddCustomMethods(newPlugin.GetType(), newPlugin);
+            pluginDomain.Plugins.Add(newPlugin);
+            GC.Collect();
             return true;
         }
 
         public void Dispose()
         {
             CommandList.Clear();
-            _plugins.ForEach(x => x.Dispose());
+
+            _pluginDomains.ForEach(x => x.Plugins.ForEach(y => y.Dispose()));
             _adminPlugins.ForEach(x => x.Dispose());
         }
     }

@@ -55,14 +55,10 @@ namespace TeamSpeak3ModularBot
             QueryRunner = new QueryRunner(QueryDispatcher);
             _pluginManager = new PluginManager(QueryRunner);
 
-            var responses = new SimpleResponse[3];
+            var responses = new SimpleResponse[2];
             responses[0] = QueryRunner.Login(Ts3Config.Username, Ts3Config.Password);
 
-            responses[1] = QueryRunner.SelectVirtualServerByPort(Ts3Config.ServerPort);
-            responses[2] = QueryRunner.UpdateCurrentQueryClient(new ClientModification
-            {
-                Nickname = Ts3Config.DisplayName
-            });
+            responses[1] = QueryRunner.SelectVirtualServerByPort(Ts3Config.ServerPort, Ts3Config.DisplayName);
 
             foreach (var response in responses)
                 if (response.ErrorId != 0)

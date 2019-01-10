@@ -14,13 +14,16 @@ namespace TS3ModularBotPluginTest
 
         }
 
+        private int _helloCount;
+
         public override string Author => "Nicer";
 
         [ClientCommand("hello", MessageMode.Private | MessageMode.Channel)]
         public void SendMessage(string clientNickname, uint clId, string input = null)
         {
+            _helloCount++;
             Ts3Instance.SendTextMessage(MessageTarget.Client, clId,
-                $"Hello {clientNickname}. {(input != null ? "You just said: " + input : "")}");
+                $"Hello {clientNickname}. You greeted me for the {_helloCount}. time. {(input != null ? "You just said: " + input : "")}");
         }
 
         [ClientCommand("config get", MessageMode.Private | MessageMode.Channel)]
