@@ -40,8 +40,8 @@ namespace TeamSpeak3ModularBot.Plugins
         public void UnloadPlugin(uint clId, string plugin)
         {
 
-            var successfulRemoval = PluginManager.UnloadPlugin(plugin);
-            Ts3Instance.SendTextMessage(MessageTarget.Client, clId, $"{(successfulRemoval ? "Successfully" : "Unsuccessfully")} removed plugin {plugin}.");
+            var successfulRemoval = PluginManager.UnloadPlugin(plugin, out var unloadedPlugins);
+            Ts3Instance.SendTextMessage(MessageTarget.Client, clId, $"{(successfulRemoval ? "Successfully" : "Unsuccessfully")} removed plugin(s) {unloadedPlugins}.");
         }
     }
 }

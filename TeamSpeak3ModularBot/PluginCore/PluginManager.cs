@@ -121,12 +121,16 @@ namespace TeamSpeak3ModularBot.PluginCore
             }
         }
 
-        public bool UnloadPlugin(string name)
+        public bool UnloadPlugin(string name, out string unloadedPlugins)
         {
             var pluginDomain = _pluginDomains.FirstOrDefault(x => x.Plugins.Any(y => y.GetType().Name == name));
             if (pluginDomain == null)
+            {
+                unloadedPlugins = null;
                 return false;
+            }
 
+            unloadedPlugins = string.Join(", ", pluginDomain.Plugins.Select(x => x.GetType().Name));
             foreach (var plugin in pluginDomain.Plugins)
             {
                 UnloadCommandsFromPlugin(plugin);
@@ -134,7 +138,6 @@ namespace TeamSpeak3ModularBot.PluginCore
             }
             AppDomain.Unload(pluginDomain.AppDomain);
             _pluginDomains.Remove(pluginDomain);
-            GC.Collect();
             return true;
         }
 
