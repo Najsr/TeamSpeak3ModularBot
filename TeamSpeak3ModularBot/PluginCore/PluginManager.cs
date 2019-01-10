@@ -150,7 +150,6 @@ namespace TeamSpeak3ModularBot.PluginCore
             pluginDomain.Plugins.Remove(plugin);
             AddCustomMethods(newPlugin.GetType(), newPlugin);
             pluginDomain.Plugins.Add(newPlugin);
-            GC.Collect();
             return true;
         }
 
