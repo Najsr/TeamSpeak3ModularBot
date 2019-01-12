@@ -57,7 +57,7 @@ namespace TeamSpeak3ModularBot.PluginCore
             }
         }
 
-        public void LoadDll(string file)
+        public List<Plugin> LoadDll(string file)
         {
             var domainInfo = new AppDomainSetup
             {
@@ -67,7 +67,7 @@ namespace TeamSpeak3ModularBot.PluginCore
             var domain = AppDomain.CreateDomain(new FileInfo(file).Name, evidence, domainInfo);
             var asm = domain.Load(AssemblyName.GetAssemblyName(file));
             var plugins = new List<Plugin>();
-            foreach (var type in asm.GetTypes().Where(x => !x.IsAbstract || typeof(Plugin).IsAssignableFrom(x) || plugins.All(y => y.GetType().Name != x.Name)))
+            foreach (var type in asm.GetTypes().Where(x => !x.IsAbstract && typeof(Plugin).IsAssignableFrom(x) && plugins.All(y => y.GetType().Name != x.Name)))
             {
                 try
                 {
@@ -79,10 +79,11 @@ namespace TeamSpeak3ModularBot.PluginCore
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error occured during plugin loading! Bad plugin: {type.Name} Error message: {ex.Message}{Environment.NewLine}Stack trace: {ex.StackTrace}");
+                    Console.WriteLine($"Error occured during plugin loading! Bad plugin: {type.Name} Error message: {ex.Message}{Environment.NewLine}");
                 }
             }
             _pluginDomains.Add(new PluginDomain(domain, plugins));
+            return plugins;
         }
 
         private void AddCustomMethods(Type type, Plugin instance)
