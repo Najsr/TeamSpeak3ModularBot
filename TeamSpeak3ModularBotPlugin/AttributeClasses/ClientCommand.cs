@@ -1,4 +1,5 @@
 ﻿using System;
+using TS3QueryLib.Core.CommandHandling;
 
 namespace TeamSpeak3ModularBotPlugin.AttributeClasses
 {
@@ -8,24 +9,15 @@ namespace TeamSpeak3ModularBotPlugin.AttributeClasses
     {
         public string Message { get; }
 
-        public MessageMode MessageType { get; }
+        public MessageTarget MessageType { get; }
 
         public string OnFailedMessage { get; }
 
-        public ClientCommand(string msg, MessageMode msgType = MessageMode.All, string onFailedMessage = null)
+        public ClientCommand(string msg, MessageTarget msgType = MessageTarget.All, string onFailedMessage = null)
         {
             OnFailedMessage = onFailedMessage;
             Message = msg;
             MessageType = msgType;
         }
-    }
-
-    [Flags]
-    public enum MessageMode
-    {
-        Private = 0x1,
-        Channel = 0x2,
-        Server = 0x4,
-        All = 0x7
     }
 }

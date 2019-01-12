@@ -2,6 +2,7 @@
 using System.Linq;
 using TeamSpeak3ModularBotPlugin;
 using TeamSpeak3ModularBotPlugin.AttributeClasses;
+using TS3QueryLib.Core.CommandHandling;
 using TS3QueryLib.Core.Server;
 using TS3QueryLib.Core.Server.Notification.EventArgs;
 
@@ -27,20 +28,20 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         private void NotificationsOnServerMessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            Execute(MessageMode.Server, e);
+            Execute(MessageTarget.Server, e);
         }
 
         private void NotificationsOnChannelMessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            Execute(MessageMode.Channel, e);
+            Execute(MessageTarget.Channel, e);
         }
 
         private void NotificationsOnClientMessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            Execute(MessageMode.Private, e);
+            Execute(MessageTarget.Client, e);
         }
 
-        private void Execute(MessageMode messageMode, MessageReceivedEventArgs eArgs)
+        private void Execute(MessageTarget messageMode, MessageReceivedEventArgs eArgs)
         {
             if (!IsItCommand(eArgs.Message, eArgs.InvokerUniqueId))
                 return;

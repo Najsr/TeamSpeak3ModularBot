@@ -14,14 +14,14 @@ namespace TeamSpeak3ModularBot.Plugins
         }
 
         [ServerGroups("Bot Manager")]
-        [ClientCommand("plugin list", MessageMode.Private)]
+        [ClientCommand("plugin list", MessageTarget.Client)]
         public void ListPlugins(uint clId)
         {
             Ts3Instance.SendTextMessage(MessageTarget.Client, clId, $"I have currently loaded {PluginManager.PluginsCount()} plugin(s). {PluginManager.GetPluginList()}");
         }
 
         [ServerGroups("Bot Manager")]
-        [ClientCommand("plugin load", MessageMode.Private, "You must specify which dll file to load!")]
+        [ClientCommand("plugin load", MessageTarget.Client, "You must specify which dll file to load!")]
         public void LoadPlugin(uint clId, string plugin)
         {
             var plugins = PluginManager.LoadDll(plugin);
@@ -29,7 +29,7 @@ namespace TeamSpeak3ModularBot.Plugins
         }
 
         [ServerGroups("Bot Manager")]
-        [ClientCommand("plugin reload", MessageMode.Private, "You must specify which plugin to reload!")]
+        [ClientCommand("plugin reload", MessageTarget.Client, "You must specify which plugin to reload!")]
         public void ReloadPlugin(uint clId, string plugin)
         {
             var success = PluginManager.ReloadPlugin(plugin);
@@ -37,7 +37,7 @@ namespace TeamSpeak3ModularBot.Plugins
         }
 
         [ServerGroups("Bot Manager")]
-        [ClientCommand("plugin unload", MessageMode.Private, "You must specify which plugin to unload!")]
+        [ClientCommand("plugin unload", MessageTarget.Client, "You must specify which plugin to unload!")]
         public void UnloadPlugin(uint clId, string plugin)
         {
 

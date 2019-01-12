@@ -41,7 +41,7 @@ namespace TeamSpeak3ModularBot.PluginCore
             ServerGroups = serverGroups;
         }
 
-        internal void Invoke(MessageReceivedEventArgs eArgs, string[] inputStrings, MessageMode mode)
+        internal void Invoke(MessageReceivedEventArgs eArgs, string[] inputStrings, MessageTarget mode)
         {
             var parameters = Method.GetParameters();
             var stringCount = 0;
@@ -61,20 +61,7 @@ namespace TeamSpeak3ModularBot.PluginCore
                 else if (type == typeof(PluginManager))
                     injectedParameters[i] = this;
                 else if (type == typeof(MessageTarget))
-                {
-                    switch (mode)
-                    {
-                        case MessageMode.Private:
-                            injectedParameters[i] = MessageTarget.Client;
-                            break;
-                        case MessageMode.Server:
-                            injectedParameters[i] = MessageTarget.Server;
-                            break;
-                        case MessageMode.Channel:
-                            injectedParameters[i] = MessageTarget.Channel;
-                            break;
-                    }
-                }
+                    injectedParameters[i] = mode;
                 else if (type == typeof(string))
                 {
                     var canBeNull = parameter.HasDefaultValue && parameter.DefaultValue == null;
@@ -104,13 +91,13 @@ namespace TeamSpeak3ModularBot.PluginCore
                             FormatString(ref output);
                             switch (mode)
                             {
-                                case MessageMode.Private:
+                                case MessageTarget.Client:
                                     Ts3Instance.SendTextMessage(MessageTarget.Client, eArgs.InvokerClientId, output);
                                     break;
-                                case MessageMode.Server:
+                                case MessageTarget.Server:
                                     Ts3Instance.SendTextMessage(MessageTarget.Server, 0, output);
                                     break;
-                                case MessageMode.Channel:
+                                case MessageTarget.Channel:
                                     Ts3Instance.SendTextMessage(MessageTarget.Channel, 0, output);
                                     break;
                             }

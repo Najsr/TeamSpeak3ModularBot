@@ -18,7 +18,7 @@ namespace TS3ModularBotPluginTest
 
         public override string Author => "Nicer";
 
-        [ClientCommand("hello", MessageMode.Private | MessageMode.Channel)]
+        [ClientCommand("hello", MessageTarget.Client | MessageTarget.Channel)]
         public void SendMessage(string clientNickname, uint clId, string input = null)
         {
             _helloCount++;
@@ -26,7 +26,7 @@ namespace TS3ModularBotPluginTest
                 $"Hello {clientNickname}. You greeted me for the {_helloCount}. time. {(input != null ? "You just said: " + input : "")}");
         }
 
-        [ClientCommand("config get", MessageMode.Private | MessageMode.Channel)]
+        [ClientCommand("config get", MessageTarget.Client | MessageTarget.Channel)]
         public void GetConfig(uint clId, string key)
         {
             var value = GetConfigValue(key);
@@ -40,7 +40,7 @@ namespace TS3ModularBotPluginTest
                 $"{key}'s value is {value}");
         }
 
-        [ClientCommand("config set", MessageMode.Private | MessageMode.Channel)]
+        [ClientCommand("config set", MessageTarget.Client | MessageTarget.Channel)]
         public void SetConfig(uint clId, string key, string value)
         {
             SetConfigValue(key, value);
@@ -48,7 +48,7 @@ namespace TS3ModularBotPluginTest
                 $"{key}'s value is {(string)GetConfigValue(key)}");
         }
 
-        [ClientCommand("uptime", MessageMode.Private | MessageMode.Channel)]
+        [ClientCommand("uptime", MessageTarget.Client | MessageTarget.Channel)]
         public void Uptime(uint clId)
         {
             Ts3Instance.SendTextMessage(MessageTarget.Client, clId, $"Been running for {DateTime.Now - Process.GetCurrentProcess().StartTime}");
