@@ -76,6 +76,22 @@ namespace TeamSpeak3ModularBot.PluginCore
                     }
                     if (inputStrings.Length > stringCount)
                     {
+                        if (parameter.DefaultValue != null && parameter.HasDefaultValue)
+                        {
+                            var allowedValues = new[] { ((string)parameter.DefaultValue).ToLower() };
+                            if (allowedValues[0].Contains('|'))
+                            {
+                                allowedValues = allowedValues[0].Split('|');
+                            }
+
+                            if (!allowedValues.Contains(inputStrings[stringCount], StringComparer.InvariantCultureIgnoreCase))
+                            {
+                                var output = $"You can only enter {string.Join(" / ", allowedValues)} in the {stringCount + 1}. parameter.";
+                                SendRensponse(mode, mode == MessageTarget.Client ? eArgs.InvokerClientId : 0, output);
+                                return;
+                            }
+                        }
+
                         injectedParameters[i] = inputStrings[stringCount];
                         stringCount++;
                     }
@@ -87,20 +103,10 @@ namespace TeamSpeak3ModularBot.PluginCore
                         {
                             if (string.IsNullOrWhiteSpace(Command.OnFailedMessage))
                                 return;
+
                             var output = Command.OnFailedMessage;
                             FormatString(ref output);
-                            switch (mode)
-                            {
-                                case MessageTarget.Client:
-                                    Ts3Instance.SendTextMessage(MessageTarget.Client, eArgs.InvokerClientId, output);
-                                    break;
-                                case MessageTarget.Server:
-                                    Ts3Instance.SendTextMessage(MessageTarget.Server, 0, output);
-                                    break;
-                                case MessageTarget.Channel:
-                                    Ts3Instance.SendTextMessage(MessageTarget.Channel, 0, output);
-                                    break;
-                            }
+                            SendRensponse(mode, mode == MessageTarget.Client ? eArgs.InvokerClientId : 0, output);
                             return;
                         }
                     }
@@ -114,6 +120,11 @@ namespace TeamSpeak3ModularBot.PluginCore
         private void FormatString(ref string formattedString)
         {
             formattedString = formattedString.Replace("{command}", "!" + Command.Message);
+        }
+
+        private void SendRensponse(MessageTarget target, uint clid, string message)
+        {
+            Ts3Instance.SendTextMessage(target, clid, message);
         }
     }
 }

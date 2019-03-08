@@ -57,10 +57,7 @@ namespace TeamSpeak3ModularBotPlugin
         {
             _config[key] = value;
             if (save)
-            {
-                using (var sw = new StreamWriter(GetConfigPath))
-                    sw.WriteAsync(JsonConvert.SerializeObject(_config, Formatting.Indented));
-            }
+                SaveConfig();
         }
 
         protected void SaveConfig()
