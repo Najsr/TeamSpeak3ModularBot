@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using TeamSpeak3ModularBotPlugin;
-using TeamSpeak3ModularBotPlugin.AttributeClasses;
 using TS3QueryLib.Core.CommandHandling;
 using TS3QueryLib.Core.Server;
 using TS3QueryLib.Core.Server.Notification.EventArgs;

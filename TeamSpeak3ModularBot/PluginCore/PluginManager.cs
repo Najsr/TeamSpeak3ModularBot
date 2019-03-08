@@ -6,7 +6,6 @@ using System.Reflection;
 using TeamSpeak3ModularBot.Plugins;
 using TeamSpeak3ModularBotPlugin;
 using TeamSpeak3ModularBotPlugin.AttributeClasses;
-using TS3QueryLib.Core.CommandHandling;
 using TS3QueryLib.Core.Server;
 
 namespace TeamSpeak3ModularBot.PluginCore

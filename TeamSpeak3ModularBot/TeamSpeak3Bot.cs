@@ -82,14 +82,14 @@ namespace TeamSpeak3ModularBot
         private void QueryDispatcher_SocketError(object sender, SocketErrorEventArgs e)
         {
             if (!Connected) return;
-            Console.WriteLine("Something went wrong: {0}", e.SocketError);
+            Console.WriteLine($"Something went wrong: {e.SocketError}");
             Disconnect();
         }
 
         private void QueryDispatcher_BanDetected(object sender, EventArgs<SimpleResponse> e)
         {
             if (!Connected) return;
-            Console.WriteLine("Ban has been detected! {0}", e.Value.BanExtraMessage);
+            Console.WriteLine($"Ban has been detected! {e.Value.BanExtraMessage}");
             Disconnect();
         }
 
