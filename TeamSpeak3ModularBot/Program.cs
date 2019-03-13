@@ -21,9 +21,9 @@ namespace TeamSpeak3ModularBot
             {
                 _config = JsonConvert.DeserializeObject<Ts3Config>(GetConfig());
             }
-            catch
+            catch(Exception e)
             {
-                Console.WriteLine("Config file is corrupted / has not been found!");
+                Console.WriteLine($"Config file is corrupted / has not been found! Exception: {e.StackTrace}");
                 Console.ReadLine();
                 Environment.Exit(0);
             }

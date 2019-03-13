@@ -3,7 +3,7 @@ using TS3QueryLib.Core.CommandHandling;
 
 namespace TeamSpeak3ModularBotPlugin.AttributeClasses
 {
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 
     public class ClientCommand : Attribute
     {
