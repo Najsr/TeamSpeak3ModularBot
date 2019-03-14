@@ -22,7 +22,7 @@ namespace TeamSpeak3ModularBotPlugin
 
         public virtual void Dispose()
         {
-
+            SaveConfig();
         }
 
         public virtual string Author { get; }

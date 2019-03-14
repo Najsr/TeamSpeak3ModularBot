@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using TeamSpeak3ModularBotPlugin;
 using TeamSpeak3ModularBotPlugin.AttributeClasses;
 using TS3QueryLib.Core.CommandHandling;
@@ -24,7 +25,7 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         public void Dispose()
         {
-
+            Class.Dispose();
         }
 
         ~CommandStruct()
@@ -64,7 +65,6 @@ namespace TeamSpeak3ModularBot.PluginCore
                     injectedParameters[i] = mode;
                 else if (type == typeof(string))
                 {
-                    var canBeNull = parameter.HasDefaultValue && parameter.DefaultValue == null;
                     switch (parameter.Name.ToLower())
                     {
                         case "uniqueid":
@@ -74,24 +74,29 @@ namespace TeamSpeak3ModularBot.PluginCore
                             injectedParameters[i] = eArgs.InvokerNickname;
                             continue;
                     }
+                    var canBeNull = parameter.HasDefaultValue && parameter.DefaultValue == null;
                     if (inputStrings.Length > stringCount)
                     {
                         if (parameter.DefaultValue != null && parameter.HasDefaultValue)
                         {
-                            var allowedValues = new[] { ((string)parameter.DefaultValue).ToLower() };
-                            if (allowedValues[0].Contains('|'))
+                            var regex = Regex.Match((string)parameter.DefaultValue, "^(?:{(?=.+})(?<name>.+)})?(?<parameters>.*)?",
+                                RegexOptions.IgnoreCase);
+                            if (regex.Groups["parameters"].Success)
                             {
-                                allowedValues = allowedValues[0].Split('|');
-                            }
+                                var allowedValues = new[] { regex.Groups["parameters"].Value };
+                                if (allowedValues[0].Contains('|'))
+                                {
+                                    allowedValues = allowedValues[0].Split('|');
+                                }
 
-                            if (!allowedValues.Contains(inputStrings[stringCount], StringComparer.InvariantCultureIgnoreCase))
-                            {
-                                var output = $"You can only enter {string.Join(" / ", allowedValues)} in the {stringCount + 1}. parameter.";
-                                SendRensponse(mode, mode == MessageTarget.Client ? eArgs.InvokerClientId : 0, output);
-                                return;
+                                if (!allowedValues.Contains(inputStrings[stringCount], StringComparer.InvariantCultureIgnoreCase))
+                                {
+                                    var output = $"You can only enter {string.Join(" / ", allowedValues)} in the {stringCount + 1}. parameter.";
+                                    SendRensponse(mode, mode == MessageTarget.Client ? eArgs.InvokerClientId : 0, output);
+                                    return;
+                                }
                             }
                         }
-
                         injectedParameters[i] = inputStrings[stringCount];
                         stringCount++;
                     }
