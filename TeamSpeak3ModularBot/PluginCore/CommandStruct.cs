@@ -79,7 +79,7 @@ namespace TeamSpeak3ModularBot.PluginCore
                         {
                             var regex = Regex.Match((string)parameter.DefaultValue, "^(?:{(?=.+})(?<name>.+)})?(?<parameters>.*)?",
                                 RegexOptions.IgnoreCase);
-                            if (regex.Groups["parameters"].Success)
+                            if (regex.Groups["parameters"].Value != string.Empty)
                             {
                                 var allowedValues = new[] { regex.Groups["parameters"].Value };
                                 if (allowedValues[0].Contains('|'))

@@ -48,7 +48,7 @@ namespace TeamSpeak3ModularBot.Plugins
                 Ts3Instance.SendTextMessage(target, clId, $"Changed name to {name}");
         }
 
-        [ClientCommand("info", "Vypíše informace o pluginu", MessageTarget.Client)]
+        [ClientCommand("info", "Prints out info about a command(s)", MessageTarget.Client)]
         public void Info(uint clId, MessageTarget target, MessageReceivedEventArgs eventArgs, string command)
         {
             var clientDatabaseId = Ts3Instance
@@ -60,7 +60,7 @@ namespace TeamSpeak3ModularBot.Plugins
             }
             var serverGroups = Ts3Instance.GetServerGroupsByClientId((uint)clientDatabaseId).Select(x => x.Name);
             var commands = Manager.CommandList.Where(x => x.Command.CommandName.StartsWith(command, StringComparison.OrdinalIgnoreCase)
-                                                          && x.ServerGroups.Groups.Intersect(serverGroups).Any()).ToArray();
+                                                          && (x.ServerGroups.Groups.Intersect(serverGroups).Any() || !x.ServerGroups.Groups.Any())).ToArray();
             if (commands.Length > 0)
             {
                 var toWrite = "Available commands:" + Environment.NewLine;
@@ -75,9 +75,9 @@ namespace TeamSpeak3ModularBot.Plugins
                         {
                             var regex = Regex.Match((string)parameterInfo.DefaultValue, "^(?:{(?=.+})(?<name>.+)})?(?<parameters>.*)?",
                                 RegexOptions.IgnoreCase);
-                            if (regex.Groups["name"].Success)
+                            if (regex.Groups["name"].Value != string.Empty)
                                 stringParameters += regex.Groups["name"].Value;
-                            else if (regex.Groups["parameters"].Success)
+                            else if (regex.Groups["parameters"].Value != string.Empty)
                             {
                                 var allowedValues = new[] { regex.Groups["parameters"].Value };
                                 if (allowedValues[0].Contains('|'))

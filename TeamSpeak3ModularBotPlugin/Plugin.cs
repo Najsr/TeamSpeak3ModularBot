@@ -63,7 +63,7 @@ namespace TeamSpeak3ModularBotPlugin
         protected void SaveConfig()
         {
             using (var sw = new StreamWriter(GetConfigPath))
-                sw.WriteAsync(JsonConvert.SerializeObject(_config));
+                sw.Write(JsonConvert.SerializeObject(_config));
         }
     }
 }
