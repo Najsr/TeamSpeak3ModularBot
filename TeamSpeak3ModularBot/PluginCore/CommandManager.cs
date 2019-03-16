@@ -48,7 +48,7 @@ namespace TeamSpeak3ModularBot.PluginCore
 
             var commands = PluginManager.CommandList
                 .Where(x => (x.Command.MessageType & messageMode) == messageMode
-                            && message.ParamString.StartsWith(x.Command.Message, StringComparison.OrdinalIgnoreCase)).ToList();
+                            && message.ParamString.StartsWith(x.Command.CommandName, StringComparison.OrdinalIgnoreCase)).ToList();
 
             commands.ForEach(commandStruct =>
             {
@@ -64,7 +64,7 @@ namespace TeamSpeak3ModularBot.PluginCore
                     }
                 }
                 var msg = message;
-                msg.Params = msg.Params.Skip(commandStruct.Command.Message.Count(y => y == ' ') + 1).ToArray();
+                msg.Params = msg.Params.Skip(commandStruct.Command.CommandName.Count(y => y == ' ') + 1).ToArray();
                 commandStruct.Invoke(eArgs, msg.Params, messageMode);
             });
         }

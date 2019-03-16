@@ -18,7 +18,7 @@ namespace TS3ModularBotPluginTest
 
         public override string Author => "Nicer";
 
-        [ClientCommand("hello", MessageTarget.Client | MessageTarget.Channel)]
+        [ClientCommand("hello", MessageTarget.Client | MessageTarget.Channel, "")]
         public void SendMessage(string clientNickname, uint clId, string input = null)
         {
             _helloCount++;

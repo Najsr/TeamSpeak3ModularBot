@@ -17,7 +17,7 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         public Plugin Class { get; }
 
-        private MethodInfo Method { get; }
+        public MethodInfo Method { get; }
 
         public ClientCommand Command { get; }
 
@@ -39,7 +39,7 @@ namespace TeamSpeak3ModularBot.PluginCore
             Class = class_;
             Method = methodName;
             Command = command;
-            ServerGroups = serverGroups;
+            ServerGroups = serverGroups ?? new ServerGroups();
         }
 
         internal void Invoke(MessageReceivedEventArgs eArgs, string[] inputStrings, MessageTarget mode)
@@ -59,8 +59,6 @@ namespace TeamSpeak3ModularBot.PluginCore
                     injectedParameters[i] = inputStrings.ToList();
                 else if (type == typeof(uint))
                     injectedParameters[i] = eArgs.InvokerClientId;
-                else if (type == typeof(PluginManager))
-                    injectedParameters[i] = this;
                 else if (type == typeof(MessageTarget))
                     injectedParameters[i] = mode;
                 else if (type == typeof(string))
@@ -124,7 +122,7 @@ namespace TeamSpeak3ModularBot.PluginCore
 
         private void FormatString(ref string formattedString)
         {
-            formattedString = formattedString.Replace("{command}", "!" + Command.Message);
+            formattedString = formattedString.Replace("{command}", "!" + Command.CommandName);
         }
 
         private void SendRensponse(MessageTarget target, uint clid, string message)
