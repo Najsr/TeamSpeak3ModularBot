@@ -50,23 +50,23 @@ namespace TeamSpeak3ModularBot.PluginCore
                 .Where(x => (x.Command.MessageType & messageMode) == messageMode
                             && message.ParamString.StartsWith(x.Command.CommandName, StringComparison.OrdinalIgnoreCase)).ToList();
 
-            commands.ForEach(commandStruct =>
+            var command = commands.OrderByDescending(x => x.Command.CommandName.Length).FirstOrDefault();
+            if (command == null)
+                return;
+            if (command.ServerGroups != null && command.ServerGroups.Groups.Length != 0)
             {
-                if (commandStruct.ServerGroups != null && commandStruct.ServerGroups.Groups.Length != 0)
+                var databaseId = Ts3Bot.GetClientNameAndDatabaseIdByUniqueId(eArgs.InvokerUniqueId).ClientDatabaseId;
+                if (databaseId != null)
                 {
-                    var databaseId = Ts3Bot.GetClientNameAndDatabaseIdByUniqueId(eArgs.InvokerUniqueId).ClientDatabaseId;
-                    if (databaseId != null)
-                    {
-                        var clientGroups = Ts3Bot.GetServerGroupsByClientId(databaseId.Value)
-                            .Select(x => new {x.Id, x.Name}).ToDictionary(x => (int)x.Id, x => x.Name);
-                        if (!commandStruct.ServerGroups.Groups.Intersect(clientGroups.Select(x => x.Value)).Any())
-                            return;
-                    }
+                    var clientGroups = Ts3Bot.GetServerGroupsByClientId(databaseId.Value)
+                        .Select(x => new { x.Id, x.Name }).ToDictionary(x => (int)x.Id, x => x.Name);
+                    if (!command.ServerGroups.Groups.Intersect(clientGroups.Select(x => x.Value)).Any())
+                        return;
                 }
-                var msg = message;
-                msg.Params = msg.Params.Skip(commandStruct.Command.CommandName.Count(y => y == ' ') + 1).ToArray();
-                commandStruct.Invoke(eArgs, msg.Params, messageMode);
-            });
+            }
+            var msg = message;
+            msg.Params = msg.Params.Skip(command.Command.CommandName.Count(y => y == ' ') + 1).ToArray();
+            command.Invoke(eArgs, msg.Params, messageMode);
         }
 
         private bool IsItCommand(string message, string uid)

@@ -24,6 +24,8 @@ namespace TS3ModularBotPluginTest
             _helloCount++;
             Ts3Instance.SendTextMessage(MessageTarget.Client, clId,
                 $"Hello {clientNickname}. You greeted me for the {_helloCount}. time. {(input != null ? "You just said: " + input : "")}");
+            var channel = Ts3Instance.GetChannelInfo(20633);
+            Console.WriteLine("PARENT ID:" + channel.ParentChannelId);
         }
 
         [ClientCommand("config get", MessageTarget.Client | MessageTarget.Channel)]

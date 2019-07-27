@@ -78,7 +78,7 @@ namespace TeamSpeak3ModularBot.PluginCore
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error occured during plugin loading! Bad plugin: {type.Name} Error message: {ex.Message}{Environment.NewLine}");
+                    Console.WriteLine($"Error occured during plugin loading! Bad plugin: {type.Name} Error message: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 }
             }
             _pluginDomains.Add(new PluginDomain(domain, plugins));

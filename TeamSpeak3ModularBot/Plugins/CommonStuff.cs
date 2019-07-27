@@ -26,12 +26,7 @@ namespace TeamSpeak3ModularBot.Plugins
             if (clientDatabaseId != null)
             {
                 var groups = Ts3Instance.GetServerGroupsByClientId((uint)clientDatabaseId).Select(x => x.Name);
-                var commands = PluginManager.CommandList.Where(x =>
-                {
-                    if (x.ServerGroups == null)
-                        return x.ServerGroups == null;
-                    return (x.ServerGroups?.Groups.Intersect(groups).Any()).Value;
-                }).ToArray();
+                var commands = PluginManager.CommandList.Where(x => x.ServerGroups.Groups.Length == 0 || (x.ServerGroups?.Groups.Intersect(groups).Any()).Value).ToArray();
                 if (commands.Any())
                     Ts3Instance.SendTextMessage(target, clId, "Available commands: " + string.Join(", ", commands.OrderBy(x => x.Command.CommandName).Select(x => "!" + x.Command.CommandName)));
                 else
@@ -71,10 +66,12 @@ namespace TeamSpeak3ModularBot.Plugins
                     var stringParameters = string.Empty;
                     foreach (var parameterInfo in parameters)
                     {
-                        if (parameterInfo.HasDefaultValue && parameterInfo.DefaultValue != null)
+                        if (parameterInfo.HasDefaultValue)
                         {
-                            var regex = Regex.Match((string)parameterInfo.DefaultValue, "^(?:{(?=.+})(?<name>.+)})?(?<parameters>.*)?",
-                                RegexOptions.IgnoreCase);
+                            var defaultValue = (string)parameterInfo.DefaultValue ?? "?";
+                            var regex = Regex.Match(defaultValue, "^(?<optional>\\?)?(?:{(?=.+})(?<name>.+?)})?(?<parameters>.*)?",
+                                    RegexOptions.IgnoreCase);
+                            var optional = regex.Groups["optional"].Value == "?";
                             if (regex.Groups["name"].Value != string.Empty)
                                 stringParameters += regex.Groups["name"].Value;
                             else if (regex.Groups["parameters"].Value != string.Empty)
@@ -82,10 +79,10 @@ namespace TeamSpeak3ModularBot.Plugins
                                 var allowedValues = new[] { regex.Groups["parameters"].Value };
                                 if (allowedValues[0].Contains('|'))
                                     allowedValues = allowedValues[0].Split('|');
-                                stringParameters += "< " + string.Join(" / ", allowedValues) + " >";
+                                stringParameters += $"< {(optional ? "[I]" : "")}{string.Join(" / ", allowedValues)}{(optional ? "[/I]" : "")} >";
                             }
                             else
-                                stringParameters += parameterInfo.Name;
+                                stringParameters += $"{(optional ? "[I]" : "")}{parameterInfo.Name}{(optional ? "[/I]" : "")}";
                         }
                         if (!parameterInfo.HasDefaultValue && parameterInfo.Name != "uniqueid" && parameterInfo.Name != "clientnickname")
                             stringParameters += parameterInfo.Name;

@@ -72,13 +72,16 @@ namespace TeamSpeak3ModularBot.PluginCore
                             injectedParameters[i] = eArgs.InvokerNickname;
                             continue;
                     }
-                    var canBeNull = parameter.HasDefaultValue && parameter.DefaultValue == null;
+                    var canBeNull = parameter.HasDefaultValue && (parameter.DefaultValue == null || ((string)parameter.DefaultValue).StartsWith("?"));
                     if (inputStrings.Length > stringCount)
                     {
-                        if (parameter.DefaultValue != null && parameter.HasDefaultValue)
+                        if (parameter.HasDefaultValue)
                         {
-                            var regex = Regex.Match((string)parameter.DefaultValue, "^(?:{(?=.+})(?<name>.+)})?(?<parameters>.*)?",
+                            var defaultValue = (string)parameter.DefaultValue ?? "?";
+
+                            var regex = Regex.Match(defaultValue, @"^(?<optional>\?)?(?:{(?=.+})(?<name>.+?)})?(?<parameters>.*)?",
                                 RegexOptions.IgnoreCase);
+                            var optional = regex.Groups["optional"].Value == "?";
                             if (regex.Groups["parameters"].Value != string.Empty)
                             {
                                 var allowedValues = new[] { regex.Groups["parameters"].Value };
@@ -87,10 +90,8 @@ namespace TeamSpeak3ModularBot.PluginCore
                                     allowedValues = allowedValues[0].Split('|');
                                 }
 
-                                if (!allowedValues.Contains(inputStrings[stringCount], StringComparer.InvariantCultureIgnoreCase))
+                                if (!allowedValues.Contains(inputStrings[stringCount], StringComparer.InvariantCultureIgnoreCase) && !optional)
                                 {
-                                    var output = $"You can only enter {string.Join(" / ", allowedValues)} in the {stringCount + 1}. parameter.";
-                                    SendRensponse(mode, mode == MessageTarget.Client ? eArgs.InvokerClientId : 0, output);
                                     return;
                                 }
                             }
@@ -109,7 +110,7 @@ namespace TeamSpeak3ModularBot.PluginCore
 
                             var output = Command.OnFailedMessage;
                             FormatString(ref output);
-                            SendRensponse(mode, mode == MessageTarget.Client ? eArgs.InvokerClientId : 0, output);
+                            SendResponse(mode, mode == MessageTarget.Client ? eArgs.InvokerClientId : 0, output);
                             return;
                         }
                     }
@@ -125,7 +126,7 @@ namespace TeamSpeak3ModularBot.PluginCore
             formattedString = formattedString.Replace("{command}", "!" + Command.CommandName);
         }
 
-        private void SendRensponse(MessageTarget target, uint clid, string message)
+        private void SendResponse(MessageTarget target, uint clid, string message)
         {
             Ts3Instance.SendTextMessage(target, clid, message);
         }
