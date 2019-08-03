@@ -11,9 +11,19 @@ namespace TeamSpeak3ModularBotPlugin
     {
         private readonly Dictionary<string, object> _config;
 
+        private readonly FileInfo ConfigFile;
+
+        public virtual string Author { get; }
+
+        protected QueryRunner Ts3Instance { get; }
+
         protected Plugin(QueryRunner queryRunner)
         {
             Ts3Instance = queryRunner;
+            ConfigFile = new FileInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/plugins/configs/" +
+                           GetType().Name +
+                           ".json");
+
             using (var sr = new StreamReader(GetConfigPath))
             {
                 _config = JsonConvert.DeserializeObject<Dictionary<string, object>>(sr.ReadToEnd()) ?? new Dictionary<string, object>();
@@ -25,32 +35,30 @@ namespace TeamSpeak3ModularBotPlugin
             SaveConfig();
         }
 
-        public virtual string Author { get; }
-
-        protected QueryRunner Ts3Instance { get; }
-
         private string GetConfigPath
         {
             get
             {
-                var file = new FileInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"/plugins/configs/" +
-                           GetType().Name +
-                           ".json");
-                file.Directory?.Create();
-                if (!file.Exists)
+                ConfigFile.Directory?.Create();
+                if (!ConfigFile.Exists)
                 {
-                    var handle = file.CreateText();
+                    var handle = ConfigFile.CreateText();
                     handle.Write("{ }");
                     handle.Close();
                 }
 
-                return file.FullName;
+                return ConfigFile.FullName;
             }
         }
 
         protected object GetConfigValue(string key)
         {
             return _config.ContainsKey(key) ? _config[key] : null;
+        }
+
+        protected bool KeyExists(string key)
+        {
+            return _config.ContainsKey(key);
         }
 
         protected void SetConfigValue(string key, object value, bool save = true)
