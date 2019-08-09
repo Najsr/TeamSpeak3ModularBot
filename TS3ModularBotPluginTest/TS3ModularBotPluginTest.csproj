@@ -50,6 +50,10 @@
     <Compile Include="MyPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TS3QueryLib.Core.Framework\TS3QueryLib.Core.Framework.csproj" />
+    <ProjectReference Include="..\TeamSpeak3ModularBotPlugin\TeamSpeak3ModularBotPlugin.csproj" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(ProjectDir)bin\$(ConfigurationName)\$(TargetFileName)" "$(SolutionDir)TeamSpeak3ModularBot\bin\$(ConfigurationName)\plugins\" /Y /I
