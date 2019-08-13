@@ -56,7 +56,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)bin\$(ConfigurationName)\$(TargetFileName)" "$(SolutionDir)TeamSpeak3ModularBot\bin\$(ConfigurationName)\plugins\" /Y /I
-xcopy "$(ProjectDir)bin\$(ConfigurationName)\$(ProjectName).pdb" "$(SolutionDir)TeamSpeak3ModularBot\bin\$(ConfigurationName)\" /Y /I</PostBuildEvent>
+    <PostBuildEvent Condition="'$(OS)' == 'Windows_NT' ">xcopy "$(ProjectDir)bin\$(ConfigurationName)\$(TargetFileName)" "$(SolutionDir)TeamSpeak3ModularBot\bin\$(ConfigurationName)\plugins\" /Y /I</PostBuildEvent>
   </PropertyGroup>
 </Project>
