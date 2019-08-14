@@ -1,5 +1,5 @@
 # TS3 Modular Bot
-
+[![Build Status](https://travis-ci.org/Najsr/TeamSpeak3ModularBot.svg?branch=master)](https://travis-ci.org/Najsr/TeamSpeak3ModularBot)
 ## Introduction
 
 A simple to use auto loading bot with many features!
